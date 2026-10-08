@@ -1,0 +1,113 @@
+{
+  "id": "gallery_dipole",
+  "folderId": "gallery_fields",
+  "spec": {
+    "version": 1,
+    "title": "Суперпозиция: диполь во внешнем электрическом поле",
+    "description": "Смотрите, как внешнее поле искривляет линии суммарного потенциала диполя.",
+    "lesson": "Поля и гравитация",
+    "topic": "Электричество",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Материальные точки, без столкновений и физического вращения. Масштаб камеры не меняет координаты или скорость. Карты можно скрыть отдельно от сил.\nφ=Σkqᵢ/rᵢ−E·(r−r₀). Ноль однородной части фиксирован в исходном центре сцены, не следует за камерой. Вклады всех включённых источников и глобальных внешних полей складываются. Заряды закреплены; пробную частицу можно добавить в редакторе. Карта электростатическая, не учитывает излучение.",
+    "duration": 30,
+    "dt": 0.01,
+    "scene": {
+      "minX": -4,
+      "maxX": 4,
+      "minY": -3,
+      "maxY": 3,
+      "grid": true,
+      "fieldLayers": {
+        "electric": true,
+        "gravity": false,
+        "magnetic": false
+      }
+    },
+    "parameters": [
+      {
+        "id": "E",
+        "label": "Внешнее Eₓ",
+        "value": 5000,
+        "min": -12000,
+        "max": 12000,
+        "unit": "Н/Кл"
+      }
+    ],
+    "bodies": [
+      {
+        "id": "positive",
+        "name": "+1 мкКл",
+        "shape": "charge",
+        "color": "#b9581d",
+        "x": -1,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.15,
+        "angle": 0,
+        "charge": 0.000001,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "negative",
+        "name": "−1 мкКл",
+        "shape": "charge",
+        "color": "#3664a0",
+        "x": 1,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.15,
+        "angle": 0,
+        "charge": -0.000001,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      }
+    ],
+    "connections": [],
+    "fields": [
+      {
+        "id": "external",
+        "name": "Электрическое поле",
+        "type": "electric",
+        "enabled": true,
+        "show": true,
+        "all": true,
+        "targets": [],
+        "gx": "0",
+        "gy": "-9.81",
+        "ex": "E",
+        "ey": "0",
+        "bz": "1",
+        "drag": "0.2",
+        "b0": "1",
+        "bxGradient": "1",
+        "byGradient": "0",
+        "originX": "0",
+        "originY": "0",
+        "color": "#b9581d"
+      }
+    ],
+    "quantities": [],
+    "graphs": [],
+    "sourceName": "public-gallery/v1/dipole"
+  }
+}

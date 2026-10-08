@@ -1,0 +1,13 @@
+# Работа с публичной Модельной
+
+Dependency-free Node.js ES modules; Russian UI. Run `node server.mjs` and open http://127.0.0.1:4189/. Bind to loopback only. This is a source distribution for local use, not a hosted multi-user service.
+
+`gallery/` is a curated set of exactly 20 reusable templates: 10 physics and 10 mathematics. `data/` is generated on first start, stores personal edits, and is excluded from Git. Never commit user data, imported personal documents, runtime version snapshots, secrets, or internal chat history. Updates must preserve existing data. Use the versioned API /api/library or tools/model-cli.mjs for runtime edits.
+
+Run `node --test tools/*.test.mjs` and `node tools/check-gallery.mjs`. Tests use isolated work/ directories. Browser-check the catalog, native and HTML demonstrations, copying, saving, responsive layout and theme. Node DOM fixtures do not verify browser rendering.
+
+Geometry keeps fixed bounds and equal x/y scale; changing an angle must not fit the camera. Camera pan/zoom never changes coordinates or time. RK4 uses internal substeps for rapid built-in interactions. Objects are point masses; no collision or angular dynamics. Ropes are tension-only and catch inelastically. Fixed uniform spheres have finite interior gravity and potential. SI Coulomb and Newton constants remain unchanged. Uniform fields render once; electric/gravitational maps show summed potentials; magnetic contours show equal Bz, not equipotentials. No Maxwell solver or induced electric field from changing B.
+
+HTML preview and lesson export keep sandbox allow-scripts, never allow-same-origin. Preserve CSP and exact iframe event-source checks. Common theme changes preserve controls. Optimistic revisions protect simultaneous edits. Comparison must advance both experiments atomically using comparisonStep. Teaching features have documented limits; do not claim audits certify arbitrary physical formulas or dimensions.
+
+Keep public docs current in README.md and docs/. Add only useful gallery models within the 10–20 model scope; retain physics and educational assumptions. Factory modules may contain numerical fixtures for additional laws; only gallery/catalog.json determines the shipped library.

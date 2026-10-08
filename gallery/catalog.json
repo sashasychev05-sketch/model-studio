@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "folders": [
+    {
+      "id": "gallery_physics",
+      "name": "Физика",
+      "parentId": null
+    },
+    {
+      "id": "gallery_mechanics",
+      "name": "Движение и колебания",
+      "parentId": "gallery_physics"
+    },
+    {
+      "id": "gallery_fields",
+      "name": "Поля и гравитация",
+      "parentId": "gallery_physics"
+    },
+    {
+      "id": "gallery_waves",
+      "name": "Волны",
+      "parentId": "gallery_physics"
+    },
+    {
+      "id": "gallery_math",
+      "name": "Математика",
+      "parentId": null
+    },
+    {
+      "id": "gallery_geometry",
+      "name": "Геометрия и функции",
+      "parentId": "gallery_math"
+    },
+    {
+      "id": "gallery_analysis",
+      "name": "Математический анализ",
+      "parentId": "gallery_math"
+    },
+    {
+      "id": "gallery_statistics",
+      "name": "Вероятность и статистика",
+      "parentId": "gallery_math"
+    }
+  ],
+  "models": [
+    {
+      "id": "gallery_newton",
+      "idea": "Одна сила, две массы: сравните ускорения и скорости."
+    },
+    {
+      "id": "gallery_pendulum",
+      "idea": "Невесомая нить удерживает груз; меняйте тяжесть и период."
+    },
+    {
+      "id": "gallery_spring_pair",
+      "idea": "Оба тела испытывают силу пружины; импульс сохраняется даже при сопротивлении."
+    },
+    {
+      "id": "gallery_orbit",
+      "idea": "Замкнутая орбита и сохранение энергии в поле закреплённого источника."
+    },
+    {
+      "id": "gallery_dipole",
+      "idea": "Внешнее поле складывается с полем двух зарядов."
+    },
+    {
+      "id": "gallery_lorentz",
+      "idea": "Магнитное поле поворачивает скорость, не изменяя кинетическую энергию."
+    },
+    {
+      "id": "gallery_sphere",
+      "idea": "Пробная частица проходит через идеальный туннель в однородном шаре."
+    },
+    {
+      "id": "gallery_parallelogram",
+      "idea": "Угол меняется, стороны в метрах и пикселях остаются прежними."
+    },
+    {
+      "id": "gallery_circle",
+      "idea": "Оранжевый синус и синий косинус — проекции точки на единичной окружности."
+    },
+    {
+      "id": "gallery_pythagoras",
+      "idea": "Сравните площади квадратов на катетах и гипотенузе."
+    },
+    {
+      "id": "gallery_quadratic",
+      "idea": "Управляйте a, b, c; следите за корнями и дискриминантом."
+    },
+    {
+      "id": "gallery_traveling_wave",
+      "idea": "Волна идёт вправо, отмеченная частица остаётся около равновесия."
+    },
+    {
+      "id": "gallery_standing_wave",
+      "idea": "Неподвижные узлы возникают при сложении встречных волн."
+    },
+    {
+      "id": "gallery_electromagnetic_wave",
+      "idea": "Поперечные E и B: скорость c, связь E = cB и условная пружинная аналогия."
+    },
+    {
+      "id": "gallery_derivative",
+      "idea": "При уменьшении шага секущая приближается к касательной."
+    },
+    {
+      "id": "gallery_integral",
+      "idea": "Площадь под кривой приближается суммами прямоугольников."
+    },
+    {
+      "id": "gallery_descriptive",
+      "idea": "Один выброс сильно меняет среднее, но слабее влияет на медиану."
+    },
+    {
+      "id": "gallery_normal",
+      "idea": "Измените среднее и разброс, измерьте вероятность интервала."
+    },
+    {
+      "id": "gallery_bayes",
+      "idea": "Редкость события влияет на смысл положительного теста."
+    },
+    {
+      "id": "gallery_monte_carlo",
+      "idea": "Случайные точки оценивают число π; один seed даёт воспроизводимый опыт."
+    }
+  ]
+}

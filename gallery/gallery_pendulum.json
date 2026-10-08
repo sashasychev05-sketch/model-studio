@@ -1,0 +1,167 @@
+{
+  "id": "gallery_pendulum",
+  "folderId": "gallery_mechanics",
+  "spec": {
+    "version": 1,
+    "title": "Конструктор: маятник на нити",
+    "description": "Опора, нерастяжимая нить и груз в поле тяжести. Все элементы можно менять в редакторе.",
+    "lesson": "Движение и колебания",
+    "topic": "Колебания и волны",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Объекты движутся как материальные точки. Связи прикреплены к центрам. Геометрия фигур не создаёт столкновений; угол рисунка не задаёт физическое вращение.\nНить невесомая: при натяжении расстояние равно 2 м, при провисании меньше. Резкое натяжение неупругое — радиальная скорость гасится. В этом примере нить остаётся натянутой; сопротивления нет. Измените g и сравните период.",
+    "duration": 20,
+    "dt": 0.01,
+    "scene": {
+      "minX": -4,
+      "maxX": 4,
+      "minY": -4,
+      "maxY": 3,
+      "grid": true
+    },
+    "parameters": [
+      {
+        "id": "g",
+        "label": "Ускорение тяжести",
+        "value": 9.81,
+        "min": 0,
+        "max": 15,
+        "unit": "м/с²"
+      }
+    ],
+    "bodies": [
+      {
+        "id": "support",
+        "name": "Платформа",
+        "shape": "platform",
+        "color": "#4f56e8",
+        "x": 0,
+        "y": 2.2,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.35,
+        "width": 4,
+        "height": 0.2,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "anchor",
+        "name": "Опора",
+        "shape": "anchor",
+        "color": "#4f56e8",
+        "x": 0,
+        "y": 1.8,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.2,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "bob",
+        "name": "Груз",
+        "shape": "circle",
+        "color": "#4f56e8",
+        "x": 1.2,
+        "y": 0.2,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.35,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": true
+      }
+    ],
+    "connections": [
+      {
+        "id": "thread",
+        "name": "Нить",
+        "type": "rope",
+        "a": "anchor",
+        "b": "bob",
+        "length": 2,
+        "stiffness": "20",
+        "damping": "0",
+        "color": "#8090a8",
+        "enabled": true,
+        "show": true
+      }
+    ],
+    "fields": [
+      {
+        "id": "gravity",
+        "name": "Поле тяжести",
+        "type": "gravity",
+        "enabled": true,
+        "show": true,
+        "all": true,
+        "targets": [],
+        "gx": "0",
+        "gy": "-g",
+        "ex": "2",
+        "ey": "0",
+        "bz": "1",
+        "drag": "0.2",
+        "b0": "1",
+        "bxGradient": "1",
+        "byGradient": "0",
+        "originX": "0",
+        "originY": "0",
+        "color": "#8055a0"
+      }
+    ],
+    "quantities": [
+      {
+        "id": "length",
+        "label": "Расстояние между концами",
+        "expression": "sqrt((bob_x-anchor_x)^2+(bob_y-anchor_y)^2)",
+        "unit": "м"
+      },
+      {
+        "id": "energy",
+        "label": "Механическая энергия",
+        "expression": "bob_m*(bob_vx^2+bob_vy^2)/2+bob_m*g*(bob_y+2)",
+        "unit": "Дж"
+      }
+    ],
+    "graphs": [
+      {
+        "id": "plot1",
+        "label": "Горизонтальная координата",
+        "expression": "bob_x",
+        "unit": "м"
+      }
+    ],
+    "sourceName": "public-gallery/v1/pendulum"
+  }
+}

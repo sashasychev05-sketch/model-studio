@@ -1,0 +1,118 @@
+{
+  "id": "gallery_lorentz",
+  "folderId": "gallery_fields",
+  "spec": {
+    "version": 1,
+    "title": "Неоднородное магнитное поле: траектория заряда",
+    "description": "Индукция меняется по x. Сила Лоренца поворачивает скорость и не совершает работу.",
+    "lesson": "Поля и гравитация",
+    "topic": "Магнитные поля",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Материальные точки, без столкновений и физического вращения. Масштаб камеры не меняет координаты или скорость. Карты можно скрыть отдельно от сил.\nBz=B₀+Gₓx. Плюс — к нам, минус — от нас. Карта показывает сумму глобальных магнитных полей. Линии равного Bz не являются силовыми линиями или эквипотенциалями. Магнитное поле здесь внешнее и стационарное, направлено перпендикулярно плоскости движения. Собственное электрическое поле частицы выключено. Пример использует условную частицу m=1 кг, q=1 Кл, а не электрон. Изменение B во времени в конструкторе не добавляет автоматически индуцированное E: полной электродинамики здесь нет.",
+    "duration": 30,
+    "dt": 0.01,
+    "scene": {
+      "minX": -3,
+      "maxX": 3,
+      "minY": -4,
+      "maxY": 2,
+      "grid": true,
+      "fieldLayers": {
+        "electric": false,
+        "gravity": false,
+        "magnetic": true
+      }
+    },
+    "parameters": [
+      {
+        "id": "B",
+        "label": "B₀",
+        "value": 1,
+        "min": -3,
+        "max": 3,
+        "unit": "Тл"
+      },
+      {
+        "id": "gradient",
+        "label": "Градиент по x",
+        "value": 0.5,
+        "min": -2,
+        "max": 2,
+        "unit": "Тл/м"
+      }
+    ],
+    "bodies": [
+      {
+        "id": "particle",
+        "name": "Заряд",
+        "shape": "charge",
+        "color": "#4f56e8",
+        "x": 0,
+        "y": 0,
+        "vx": 2,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.12,
+        "angle": 0,
+        "charge": 1,
+        "fieldEnabled": false,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": true
+      }
+    ],
+    "connections": [],
+    "fields": [
+      {
+        "id": "Bmap",
+        "name": "Неоднородное магнитное поле",
+        "type": "magnetic-gradient",
+        "enabled": true,
+        "show": true,
+        "all": true,
+        "targets": [],
+        "gx": "0",
+        "gy": "-9.81",
+        "ex": "2",
+        "ey": "0",
+        "bz": "1",
+        "drag": "0.2",
+        "b0": "B",
+        "bxGradient": "gradient",
+        "byGradient": "0",
+        "originX": "0",
+        "originY": "0",
+        "color": "#3664a0"
+      }
+    ],
+    "quantities": [
+      {
+        "id": "speed",
+        "label": "Модуль скорости",
+        "expression": "sqrt(particle_vx^2+particle_vy^2)",
+        "unit": "м/с"
+      },
+      {
+        "id": "kinetic",
+        "label": "Кинетическая энергия",
+        "expression": "particle_m*(particle_vx^2+particle_vy^2)/2",
+        "unit": "Дж"
+      }
+    ],
+    "graphs": [
+      {
+        "id": "kineticPlot",
+        "label": "Кинетическая энергия",
+        "expression": "particle_m*(particle_vx^2+particle_vy^2)/2",
+        "unit": "Дж"
+      }
+    ],
+    "sourceName": "public-gallery/v1/lorentz"
+  }
+}

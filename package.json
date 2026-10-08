@@ -1,0 +1,15 @@
+{
+  "name": "model-studio",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tools/*.test.mjs",
+    "build:theme": "node tools/build-theme.mjs",
+    "check:gallery": "node tools/check-gallery.mjs"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "description": "Локальная лаборатория интерактивных моделей по физике и математике"
+}

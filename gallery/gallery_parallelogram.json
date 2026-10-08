@@ -1,0 +1,289 @@
+{
+  "id": "gallery_parallelogram",
+  "folderId": "gallery_geometry",
+  "spec": {
+    "version": 1,
+    "title": "Параллелограмм: угол меняется, стороны сохраняются",
+    "description": "Зависимые вершины, линейки и транспортир. Масштаб не меняется вместе с углом.",
+    "lesson": "Геометрия и функции",
+    "topic": "Геометрия",
+    "grade": "all",
+    "subject": "math",
+    "notes": "AB = CD = 4 м; AD = BC = 3 м. D построена на окружности вокруг A, C — параллельным переносом AB от D. Координаты и шкала постоянны. Можно перемещать подписи отдельно от точек.",
+    "duration": 15,
+    "dt": 0.01,
+    "scene": {
+      "minX": -4,
+      "maxX": 9,
+      "minY": -3,
+      "maxY": 6,
+      "grid": true
+    },
+    "parameters": [
+      {
+        "id": "alpha",
+        "label": "Угол DAB",
+        "unit": "°",
+        "value": 60,
+        "min": 20,
+        "max": 160
+      }
+    ],
+    "bodies": [
+      {
+        "id": "A",
+        "name": "A",
+        "shape": "point",
+        "color": "#239d86",
+        "x": 0,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.1,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "B",
+        "name": "B",
+        "shape": "point",
+        "color": "#239d86",
+        "x": 4,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.1,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "C",
+        "name": "C",
+        "shape": "point",
+        "color": "#239d86",
+        "x": 5.5,
+        "y": 2.598,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.1,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "D",
+        "name": "D",
+        "shape": "point",
+        "color": "#239d86",
+        "x": 1.5,
+        "y": 2.598,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.1,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      }
+    ],
+    "connections": [
+      {
+        "id": "edge0",
+        "name": "Линия на рисунке",
+        "type": "line",
+        "a": "A",
+        "b": "B",
+        "length": 1,
+        "stiffness": "20",
+        "damping": "0",
+        "color": "#8090a8",
+        "enabled": true,
+        "show": true
+      },
+      {
+        "id": "edge1",
+        "name": "Линия на рисунке",
+        "type": "line",
+        "a": "B",
+        "b": "C",
+        "length": 1,
+        "stiffness": "20",
+        "damping": "0",
+        "color": "#8090a8",
+        "enabled": true,
+        "show": true
+      },
+      {
+        "id": "edge2",
+        "name": "Линия на рисунке",
+        "type": "line",
+        "a": "C",
+        "b": "D",
+        "length": 1,
+        "stiffness": "20",
+        "damping": "0",
+        "color": "#8090a8",
+        "enabled": true,
+        "show": true
+      },
+      {
+        "id": "edge3",
+        "name": "Линия на рисунке",
+        "type": "line",
+        "a": "D",
+        "b": "A",
+        "length": 1,
+        "stiffness": "20",
+        "damping": "0",
+        "color": "#8090a8",
+        "enabled": true,
+        "show": true
+      }
+    ],
+    "fields": [],
+    "quantities": [
+      {
+        "id": "diagAC",
+        "label": "Диагональ AC",
+        "unit": "м",
+        "expression": "sqrt((C_x-A_x)^2+(C_y-A_y)^2)"
+      },
+      {
+        "id": "diagBD",
+        "label": "Диагональ BD",
+        "unit": "м",
+        "expression": "sqrt((D_x-B_x)^2+(D_y-B_y)^2)"
+      },
+      {
+        "id": "sumSquares",
+        "label": "AC² + BD²",
+        "unit": "м²",
+        "expression": "diagAC^2+diagBD^2"
+      }
+    ],
+    "graphs": [],
+    "geometry": [
+      {
+        "id": "circleD",
+        "type": "circle",
+        "target": "D",
+        "center": "A",
+        "length": "3",
+        "angle": "alpha"
+      },
+      {
+        "id": "parallelC",
+        "type": "parallel",
+        "target": "C",
+        "center": "D",
+        "a": "A",
+        "b": "B",
+        "length": "4",
+        "angle": "0"
+      }
+    ],
+    "measurements": [
+      {
+        "id": "ABlength",
+        "type": "distance",
+        "label": "AB",
+        "a": "A",
+        "b": "B"
+      },
+      {
+        "id": "ADlength",
+        "type": "distance",
+        "label": "AD",
+        "a": "A",
+        "b": "D"
+      },
+      {
+        "id": "angleDAB",
+        "type": "angle",
+        "label": "∠DAB",
+        "a": "D",
+        "vertex": "A",
+        "b": "B"
+      }
+    ],
+    "invariants": [
+      {
+        "id": "parallelogramLaw",
+        "label": "Правило параллелограмма",
+        "expression": "diagAC^2+diagBD^2-2*(4^2+3^2)",
+        "absolute": 1e-9,
+        "relative": 0
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "sixty",
+        "title": "60°",
+        "note": "Что произойдёт с диагоналями при увеличении угла?",
+        "parameters": {
+          "alpha": 60
+        }
+      },
+      {
+        "id": "right",
+        "title": "90°",
+        "note": "Прямоугольник: обе диагонали равны 5 м.",
+        "parameters": {
+          "alpha": 90
+        }
+      },
+      {
+        "id": "obtuse",
+        "title": "120°",
+        "note": "Какие длины сохранились?",
+        "parameters": {
+          "alpha": 120
+        }
+      }
+    ],
+    "assignment": {
+      "prediction": "Изменятся ли стороны при изменении только угла? Как поведут себя диагонали?",
+      "experiment": "Переключите 60°, 90°, 120°; проверьте линейки и транспортир.",
+      "explanation": "Почему AC² + BD² остаётся равно 50 м²? Выведите соотношение через теорему косинусов.",
+      "hideResults": true
+    },
+    "sourceName": "public-gallery/v1/parallelogram"
+  }
+}

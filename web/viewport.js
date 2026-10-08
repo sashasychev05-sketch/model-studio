@@ -1,0 +1,18 @@
+import {cameraOf,screenToWorld,zoomCamera,panCamera} from '/lib/camera.js';
+export function installSceneNavigation(element,options){let gesture=null,wheelTimer=null,wheelStarted=false;
+ const getScene=()=>options.getModel().scene;
+ const begin=kind=>options.onGestureStart?.(kind),end=kind=>options.onGestureEnd?.(kind);
+ const world=(scene,e)=>screenToWorld(scene,element.querySelector('svg').getBoundingClientRect(),e.clientX,e.clientY);
+ const zoom=(factor,anchor)=>options.onViewChange(zoomCamera(getScene(),factor,anchor));
+ element.onpointerdown=e=>{if(e.button!==0||!element.querySelector('svg'))return;const scene=structuredClone(getScene()),label=e.target.closest?.('[data-label]'),body=e.target.closest?.('[data-body]'),link=e.target.closest?.('[data-connection]'),point=world(scene,e),pan=options.getMode?.()==='pan';let kind='view',id=null;
+  if(!pan&&label&&options.canEditBody?.()){kind='label';id=label.dataset.label;}else if(!pan&&body&&options.canEditBody?.()){kind='body';id=body.dataset.body;}else if(!pan&&link&&options.canEditBody?.()){kind='connection';id=link.dataset.connection;}
+  const b=id&&kind==='body'?options.getModel().bodies.find(b=>b.id===id):null;gesture={kind,id,scene,point,clientX:e.clientX,clientY:e.clientY,pointerId:e.pointerId,started:false,original:kind==='label'?{x:Number(label.dataset.labelX)||0,y:Number(label.dataset.labelY)||0}:b?{x:b.x,y:b.y}:null};element.setPointerCapture?.(e.pointerId);element.focus?.({preventScroll:true});e.preventDefault();};
+ element.onpointermove=e=>{if(!gesture||e.pointerId!==gesture.pointerId)return;const g=gesture;if(g.kind==='connection')return;if(!g.started&&Math.hypot(e.clientX-g.clientX,e.clientY-g.clientY)<3)return;if(!g.started){begin(g.kind);g.started=true;}const point=world(g.scene,e),dx=point.x-g.point.x,dy=point.y-g.point.y;
+  if(g.kind==='label'){const rect=element.querySelector('svg').getBoundingClientRect(),factor=Math.min(rect.width/800,rect.height/450);options.onLabelChange?.(g.id,g.original.x+(e.clientX-g.clientX)/factor,g.original.y+(e.clientY-g.clientY)/factor);}else if(g.kind==='body')options.onBodyChange(g.id,g.original.x+dx,g.original.y+dy);else options.onViewChange(panCamera(g.scene,-dx,-dy));};
+ const finish=e=>{if(!gesture||e.pointerId!==gesture.pointerId)return;const g=gesture;gesture=null;element.releasePointerCapture?.(e.pointerId);if(g.started)end(g.kind);if(g.id)options.onSelect?.(g.kind,g.id);};
+ element.onpointerup=finish;element.onpointercancel=finish;
+ element.onwheel=e=>{if(!element.querySelector('svg')||gesture)return;e.preventDefault();if(!wheelStarted){begin('view');wheelStarted=true;}const anchor=world(getScene(),e);zoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.002),anchor);clearTimeout(wheelTimer);wheelTimer=setTimeout(()=>{wheelStarted=false;end('view');},250);};
+ element.onkeydown=e=>{if(e.target!==element)return;const scene=getScene(),camera=cameraOf(scene);let next;
+  if(['+','=','-','_','0','Home','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();begin('view');if(e.key==='0'||e.key==='Home')next={x:(scene.minX+scene.maxX)/2,y:(scene.minY+scene.maxY)/2,zoom:1};else if(['+','=','-','_'].includes(e.key))next=zoomCamera(scene,e.key==='+'||e.key==='='?1.25:.8);else next=panCamera(scene,(e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0)*(scene.maxX-scene.minX)/camera.zoom*.1,(e.key==='ArrowUp'?1:e.key==='ArrowDown'?-1:0)*(scene.maxY-scene.minY)/camera.zoom*.1);options.onViewChange(next);end('view');}};
+ return ()=>{clearTimeout(wheelTimer);if(wheelStarted)end('view');gesture=null;for(const k of ['onpointerdown','onpointermove','onpointerup','onpointercancel','onwheel','onkeydown'])element[k]=null;};
+}

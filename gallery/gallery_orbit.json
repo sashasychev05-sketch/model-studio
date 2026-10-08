@@ -1,0 +1,102 @@
+{
+  "id": "gallery_orbit",
+  "folderId": "gallery_fields",
+  "spec": {
+    "version": 1,
+    "title": "Гравитация: круговая орбита и потенциал",
+    "description": "Источником поля служит массивное неподвижное тело. Проверяйте радиус, период и энергию пробной частицы.",
+    "lesson": "Поля и гравитация",
+    "topic": "Гравитация",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Материальные точки, без столкновений и физического вращения. Масштаб камеры не меняет координаты или скорость. Карты можно скрыть отдельно от сил.\nG = 6,67430·10⁻¹¹ м³/(кг·с²). Масса источника 10⁷ кг специально велика: гравитация обычных килограммовых грузов слишком слаба для короткого урока. Потенциал Φg=−GM/r, сила направлена к источнику. Источник закреплён извне. У пробной частицы собственное поле выключено, но она испытывает притяжение. При включении собственного поля и освобождении источника возможен взаимный расчёт. Расстояние и энергия учитывают текущее положение, массу, радиус и переключатель источника.",
+    "duration": 100,
+    "dt": 0.01,
+    "scene": {
+      "minX": -0.8,
+      "maxX": 0.8,
+      "minY": -0.8,
+      "maxY": 0.8,
+      "grid": true,
+      "fieldLayers": {
+        "electric": false,
+        "gravity": true,
+        "magnetic": false
+      }
+    },
+    "parameters": [],
+    "bodies": [
+      {
+        "id": "center",
+        "name": "Источник M",
+        "shape": "circle",
+        "color": "#4f56e8",
+        "x": 0,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 10000000,
+        "size": 0.04,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": true,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": false,
+        "vector": false
+      },
+      {
+        "id": "probe",
+        "name": "Пробная частица",
+        "shape": "circle",
+        "color": "#4f56e8",
+        "x": 0.5,
+        "y": 0,
+        "vx": 0,
+        "vy": 0.036535735930729514,
+        "mass": 1,
+        "size": 0.025,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": true
+      }
+    ],
+    "connections": [],
+    "fields": [],
+    "quantities": [
+      {
+        "id": "radius",
+        "label": "Расстояние от источника",
+        "expression": "sqrt((probe_x-center_x)^2+(probe_y-center_y)^2)",
+        "unit": "м"
+      },
+      {
+        "id": "energy",
+        "label": "Механическая энергия частицы",
+        "expression": "probe_m*(probe_vx^2+probe_vy^2)/2+probe_m*center_gravity*(-6.67430e-11*center_m/max(radius,center_R)+6.67430e-11*center_m*(min(radius,center_R)^2-center_R^2)/(2*max(center_R,1e-30)^3))",
+        "unit": "Дж"
+      }
+    ],
+    "graphs": [
+      {
+        "id": "orbit",
+        "label": "Радиус орбиты",
+        "expression": "sqrt((probe_x-center_x)^2+(probe_y-center_y)^2)",
+        "unit": "м"
+      }
+    ],
+    "sourceName": "public-gallery/v1/orbit"
+  }
+}

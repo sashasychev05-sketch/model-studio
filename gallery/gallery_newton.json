@@ -1,0 +1,135 @@
+{
+  "id": "gallery_newton",
+  "folderId": "gallery_mechanics",
+  "spec": {
+    "version": 1,
+    "title": "Одна сила, разные массы: сравнение опытов",
+    "description": "Два опыта с общей шкалой. Ползунок массы связан со свойством тела.",
+    "lesson": "Движение и колебания",
+    "topic": "Динамика",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Материальная точка, постоянная горизонтальная сила, сопротивления и столкновений нет. Начальная скорость равна нулю. Нажмите «Сравнить опыты» и задайте массу B = 2 кг. Оси у обоих опытов одинаковы.",
+    "duration": 2,
+    "dt": 0.01,
+    "scene": {
+      "minX": -1,
+      "maxX": 15,
+      "minY": -4,
+      "maxY": 4,
+      "grid": true
+    },
+    "parameters": [
+      {
+        "id": "F",
+        "label": "Сила",
+        "unit": "Н",
+        "value": 6,
+        "min": 0,
+        "max": 6
+      },
+      {
+        "id": "massControl",
+        "label": "Масса тела",
+        "unit": "кг",
+        "value": 1,
+        "min": 1,
+        "max": 4,
+        "binding": {
+          "body": "body",
+          "property": "mass"
+        }
+      }
+    ],
+    "bodies": [
+      {
+        "id": "body",
+        "name": "Тело",
+        "shape": "rect",
+        "color": "#4f56e8",
+        "x": 0,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.35,
+        "width": 0.7,
+        "height": 0.5,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "F",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": true
+      }
+    ],
+    "connections": [],
+    "fields": [],
+    "quantities": [
+      {
+        "id": "acceleration",
+        "label": "Ускорение",
+        "expression": "F/body_m",
+        "unit": "м/с²"
+      },
+      {
+        "id": "speedValue",
+        "label": "Скорость",
+        "expression": "body_vx",
+        "unit": "м/с"
+      }
+    ],
+    "graphs": [
+      {
+        "id": "speedGraph",
+        "label": "Скорость",
+        "unit": "м/с",
+        "expression": "body_vx",
+        "autoScale": false,
+        "minY": 0,
+        "maxY": 12
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "light",
+        "title": "Масса 1 кг",
+        "note": "Предскажите ускорение, затем сравните с массой 2 кг.",
+        "parameters": {
+          "F": 6,
+          "massControl": 1
+        }
+      },
+      {
+        "id": "heavy",
+        "title": "Масса 2 кг",
+        "note": "При той же силе ускорение уменьшается вдвое.",
+        "parameters": {
+          "F": 6,
+          "massControl": 2
+        }
+      }
+    ],
+    "assignment": {
+      "prediction": "Как изменится ускорение, если массу увеличить вдвое, а силу сохранить?",
+      "experiment": "Сравните опыты с массами 1 и 2 кг. Запустите анимацию.",
+      "explanation": "Объясните соотношение скоростей и ускорений через F = ma.",
+      "hideResults": true
+    },
+    "invariants": [
+      {
+        "id": "velocityLaw",
+        "label": "Закон v = at",
+        "expression": "body_vx-F/body_m*t",
+        "absolute": 1e-8,
+        "relative": 0
+      }
+    ],
+    "sourceName": "public-gallery/v1/newton"
+  }
+}

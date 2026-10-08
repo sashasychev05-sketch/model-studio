@@ -1,0 +1,133 @@
+{
+  "id": "gallery_sphere",
+  "folderId": "gallery_fields",
+  "spec": {
+    "version": 1,
+    "title": "Массивный шар: гравитация снаружи и внутри",
+    "description": "Пробная частица проходит через центр однородного шара. Поле внутри растёт с расстоянием, снаружи убывает как 1/r².",
+    "lesson": "Поля и гравитация",
+    "topic": "Гравитация",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Неподвижный однородный шар: M = 6·10¹⁵ кг, R = 100 м. Его граница нарисована в физическом масштабе. Вне шара g = GM/r², внутри g = GMr/R³, в центре g = 0. Потенциал снаружи −GM/r, внутри −GM(3R²−r²)/(2R³).\nЧастица — пробная материальная точка. Проход сквозь шар означает идеальный туннель без сопротивления и столкновений; это не симуляция удара в планету. Поле можно выключить под сценой. Изменение источника начинает новый опыт с t = 0.\nВеличины g и энергия учитывают массу, радиус, положение и переключатель источника. Источник удерживается внешней опорой, поэтому импульс пары не сохраняется. Для двух свободных источников используйте точечную модель с радиусом 0.",
+    "duration": 30,
+    "dt": 0.01,
+    "scene": {
+      "minX": -350,
+      "maxX": 350,
+      "minY": -200,
+      "maxY": 200,
+      "grid": true,
+      "fieldLayers": {
+        "electric": false,
+        "gravity": true,
+        "magnetic": false
+      }
+    },
+    "parameters": [],
+    "bodies": [
+      {
+        "id": "sphere",
+        "name": "Однородный шар",
+        "shape": "circle",
+        "color": "#23a08c",
+        "x": 0,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 6000000000000000,
+        "size": 5,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": true,
+        "motion": "fixed",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": false,
+        "gravityRadius": 100
+      },
+      {
+        "id": "probe",
+        "name": "Пробная частица",
+        "shape": "circle",
+        "color": "#4f56e8",
+        "x": 250,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 6,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": true
+      }
+    ],
+    "connections": [],
+    "fields": [],
+    "quantities": [
+      {
+        "id": "r",
+        "label": "Расстояние до центра",
+        "expression": "sqrt((probe_x-sphere_x)^2+(probe_y-sphere_y)^2)",
+        "unit": "м"
+      },
+      {
+        "id": "g",
+        "label": "Модуль g",
+        "expression": "sphere_gravity*6.67430e-11*sphere_m*r/max(r,sphere_R)^3",
+        "unit": "м/с²"
+      },
+      {
+        "id": "potential",
+        "label": "Потенциальная энергия",
+        "expression": "probe_m*sphere_gravity*(-6.67430e-11*sphere_m/max(r,sphere_R)+6.67430e-11*sphere_m*(min(r,sphere_R)^2-sphere_R^2)/(2*max(sphere_R,1e-30)^3))",
+        "unit": "Дж"
+      },
+      {
+        "id": "energy",
+        "label": "Полная энергия",
+        "expression": "kinetic+potential",
+        "unit": "Дж"
+      },
+      {
+        "id": "kinetic",
+        "label": "Кинетическая энергия",
+        "expression": "probe_m*(probe_vx^2+probe_vy^2)/2",
+        "unit": "Дж"
+      }
+    ],
+    "graphs": [
+      {
+        "id": "position",
+        "label": "Положение частицы",
+        "expression": "probe_x",
+        "unit": "м",
+        "autoScale": false,
+        "minY": -300,
+        "maxY": 300
+      },
+      {
+        "id": "acceleration",
+        "label": "Модуль g",
+        "expression": "g",
+        "unit": "м/с²",
+        "autoScale": false,
+        "minY": 0,
+        "maxY": 45
+      }
+    ],
+    "sourceName": "public-gallery/v1/sphere"
+  }
+}

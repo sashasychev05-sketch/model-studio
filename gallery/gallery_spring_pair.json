@@ -1,0 +1,138 @@
+{
+  "id": "gallery_spring_pair",
+  "folderId": "gallery_mechanics",
+  "spec": {
+    "version": 1,
+    "title": "Конструктор: два тела и пружина",
+    "description": "Пружина действует на оба тела. Меняйте массу, жёсткость и сопротивление.",
+    "lesson": "Движение и колебания",
+    "topic": "Колебания и волны",
+    "grade": "all",
+    "subject": "physics",
+    "notes": "Объекты движутся как материальные точки. Связи прикреплены к центрам. Геометрия фигур не создаёт столкновений; угол рисунка не задаёт физическое вращение.\nГоризонтальное движение без внешних сил. Длина недеформированной пружины 2 м. При c = 0 полная энергия сохраняется; c > 0 рассеивает энергию. Суммарный импульс сохраняется в обоих случаях.",
+    "duration": 20,
+    "dt": 0.01,
+    "scene": {
+      "minX": -5,
+      "maxX": 5,
+      "minY": -2,
+      "maxY": 4,
+      "grid": true
+    },
+    "parameters": [
+      {
+        "id": "k",
+        "label": "Жёсткость",
+        "value": 6,
+        "min": 1,
+        "max": 30,
+        "unit": "Н/м"
+      },
+      {
+        "id": "c",
+        "label": "Сопротивление пружины",
+        "value": 0,
+        "min": 0,
+        "max": 3,
+        "unit": "Н·с/м"
+      }
+    ],
+    "bodies": [
+      {
+        "id": "left",
+        "name": "Тело 1",
+        "shape": "rect",
+        "color": "#3664a0",
+        "x": -1.5,
+        "y": 1,
+        "vx": 0,
+        "vy": 0,
+        "mass": 1,
+        "size": 0.35,
+        "width": 0.7,
+        "height": 0.5,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": false
+      },
+      {
+        "id": "right",
+        "name": "Тело 2",
+        "shape": "triangle",
+        "color": "#b9581d",
+        "x": 1.5,
+        "y": 1,
+        "vx": 0,
+        "vy": 0,
+        "mass": 2,
+        "size": 0.35,
+        "width": 0.7,
+        "height": 0.5,
+        "angle": 0,
+        "charge": 0,
+        "fieldEnabled": true,
+        "gravityEnabled": false,
+        "motion": "force",
+        "fx": "0",
+        "fy": "0",
+        "xFormula": "x0",
+        "yFormula": "y0",
+        "trail": true,
+        "vector": false
+      }
+    ],
+    "connections": [
+      {
+        "id": "spring",
+        "name": "Пружина",
+        "type": "spring",
+        "a": "left",
+        "b": "right",
+        "length": 2,
+        "stiffness": "k",
+        "damping": "c",
+        "color": "#8090a8",
+        "enabled": true,
+        "show": true
+      }
+    ],
+    "fields": [],
+    "quantities": [
+      {
+        "id": "momentum",
+        "label": "Суммарный импульс по x",
+        "expression": "left_m*left_vx+right_m*right_vx",
+        "unit": "кг·м/с"
+      },
+      {
+        "id": "energy",
+        "label": "Кинетическая и упругая энергия",
+        "expression": "left_m*(left_vx^2+left_vy^2)/2+right_m*(right_vx^2+right_vy^2)/2+k*(sqrt((right_x-left_x)^2+(right_y-left_y)^2)-2)^2/2",
+        "unit": "Дж"
+      }
+    ],
+    "graphs": [
+      {
+        "id": "plot1",
+        "label": "Координата первого тела",
+        "expression": "left_x",
+        "unit": "м"
+      },
+      {
+        "id": "plot2",
+        "label": "Координата второго тела",
+        "expression": "right_x",
+        "unit": "м"
+      }
+    ],
+    "sourceName": "public-gallery/v1/spring-pair"
+  }
+}
