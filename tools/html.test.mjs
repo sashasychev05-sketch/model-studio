@@ -1,3 +1,4 @@
+import {panelToggle,panelHandle} from '../web/panels.js';
 import * as teachingFunctions from '../lib/teaching.js';
 import * as measurementFunctions from '../lib/measurements.js';
 import {auditModel} from '../lib/audit.js';
@@ -15,7 +16,7 @@ import {validateModel,emptyModel} from '../lib/model.js';
 import {validatePhysics} from '../lib/engine.js';
 import {withHTMLTheme} from '../lib/theme.js';
 const project=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const htmlRuntime={lessonDefinitions,enrichmentDefinitions,esc:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))};
+const htmlRuntime={panelToggle,panelHandle,lessonDefinitions,enrichmentDefinitions,esc:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))};
 vm.runInNewContext((await fs.readFile(path.join(project,'web/html-model.js'),'utf8')).replace(/^import[^\n]*\n/gm,'').replace(/\bexport\s+(?=function\b)/g,'')+'\nglobalThis.renderEditor=htmlEditor;globalThis.renderThumbnail=htmlThumbnail;',htmlRuntime);
 const {renderEditor:htmlEditor,renderThumbnail:htmlThumbnail}=htmlRuntime;
 process.env.MODEL_STUDIO_DATA_DIR=path.resolve(project,'work/html-test-'+crypto.randomUUID());

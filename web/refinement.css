@@ -1,0 +1,54 @@
+/* Shared finishing rules, loaded after the legacy layouts. */
+.sidebar{align-self:start;overflow-y:auto;scrollbar-width:thin}
+.folder-navigation{flex:none;overflow:visible;max-height:none}
+.sidebar-bottom{margin-top:24px;padding-top:8px}.local-note{display:none}
+.catalog-top{height:auto;min-height:76px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+.catalog-top>span{display:none}.catalog-top>div{width:100%;justify-content:flex-end;flex-wrap:wrap}
+.catalog-content{padding-top:28px}.heading-row{margin-bottom:20px}
+.filter-row{margin-bottom:14px}.catalog-controls{gap:12px;margin-bottom:24px}
+.catalog-controls>.text-btn{padding:8px 0}.card-content{padding:18px 20px}
+.card-content>p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:0}
+.card-footer{margin-top:14px;padding-top:8px}.card-footer>span{font-size:11px}
+.object-panel .panel-heading{height:auto;min-height:72px;padding:18px 20px;flex-shrink:0}
+.object-panel .panel-heading h2{line-height:1.5;overflow-wrap:normal}
+.object-bottom>.btn{margin-top:8px}
+select{color-scheme:inherit}option,optgroup{color:var(--studio-ink);background:var(--studio-surface)}
+@media(max-width:650px){.sidebar{min-height:0}.folder-navigation{max-height:none}.sidebar-bottom{margin-top:10px}.catalog-top>div{justify-content:flex-start}.catalog-content{padding-top:22px}.object-panel .panel-heading{min-height:56px;padding:14px 18px}}
+
+.workspace{grid-template-columns:var(--catalog-width,242px) minmax(0,1fr)}
+.workspace.catalog-hidden{grid-template-columns:0 minmax(0,1fr)}
+.workspace.catalog-hidden .sidebar{display:none}
+.sidebar,.object-panel,.inspector{position:sticky;overflow:visible}
+.sidebar{overflow-y:auto;overflow-x:hidden}.sidebar>*{flex-shrink:0}
+.sidebar .brand{gap:9px;font-size:18px;margin-left:0;margin-right:0}
+.sidebar .brand>span:last-child{min-width:0;overflow:hidden}.sidebar .brand small{font-size:11px}
+.sidebar .brand-mark{width:34px;height:34px;flex-shrink:0}
+.folder-row .nav-item{min-width:0;gap:8px;padding-left:6px;padding-right:6px}
+.sidebar .folder-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-resizer{position:absolute;top:0;bottom:0;width:10px;z-index:24;cursor:col-resize;touch-action:none}
+.panel-resizer.left-edge{right:-5px}.panel-resizer.right-edge{left:-5px}
+.panel-resizer:hover,.panel-resizer:focus-visible{background:var(--studio-accentSoft);outline:2px solid var(--studio-accent)}
+.panel-dragging,.panel-dragging *{cursor:col-resize!important;user-select:none!important}
+.panel-toggle{flex-shrink:0}
+.custom-speed{display:inline-flex;align-items:center;gap:8px;font-size:13px;white-space:nowrap}
+.custom-speed input{width:85px;padding:8px;border:1px solid var(--studio-line);border-radius:8px;background:var(--studio-surface);color:var(--studio-ink)}
+.transport>div:last-child{flex-wrap:wrap}
+.catalog-top>div>.panel-toggle{margin-right:auto}
+.object-panel{overflow-y:auto}.inspector{overflow-y:auto}
+.editor-main{grid-template-columns:var(--objects-width,215px) minmax(0,1fr) var(--properties-width,310px)}
+.editor-shell.objects-hidden .editor-main{grid-template-columns:0 minmax(0,1fr) var(--properties-width,310px)}
+.editor-shell.properties-hidden .editor-main{grid-template-columns:var(--objects-width,215px) minmax(0,1fr) 0}
+.editor-shell.objects-hidden.properties-hidden .editor-main{grid-template-columns:0 minmax(0,1fr) 0}
+.editor-shell.objects-hidden .object-panel,.editor-shell.properties-hidden .inspector{display:none}
+.object-panel .panel-resizer,.inspector .panel-resizer{position:fixed;bottom:0;top:var(--editor-header-height,75px)}
+.object-panel .panel-resizer{left:calc(var(--objects-width,215px) - 5px);right:auto}
+.inspector .panel-resizer{left:auto;right:calc(var(--properties-width,310px) - 5px)}
+.editor-shell.present .editor-actions>.panel-toggle,.editor-shell.analysis-mode .editor-actions>.panel-toggle{display:none}
+.analysis-mode .editor-main{display:block}
+.editor-shell.analysis-mode .editor-main>.object-panel,.editor-shell.analysis-mode .editor-main>.inspector{display:none}
+.html-main{grid-template-columns:minmax(0,1fr) var(--properties-width,310px)}
+.html-editor.properties-hidden .html-main{grid-template-columns:minmax(0,1fr) 0}
+.html-editor.properties-hidden .inspector{display:none}
+.html-editor .panel-resizer{top:var(--editor-header-height,75px)}
+@media(max-width:950px){.editor-main,.editor-shell.properties-hidden .editor-main{grid-template-columns:var(--objects-width,215px) minmax(0,1fr)}.editor-shell.objects-hidden .editor-main,.editor-shell.objects-hidden.properties-hidden .editor-main{grid-template-columns:0 minmax(0,1fr)}.inspector{position:static;overflow-y:visible}.inspector .panel-resizer{display:none}}
+@media(max-width:650px){.workspace{display:block}.sidebar{position:static;overflow-y:visible}.panel-resizer{display:none}.editor-main{display:flex}.editor-shell.objects-hidden .editor-main{display:flex}.object-panel{position:static;overflow-y:visible}.editor-shell:not(.present):not(.analysis-mode) .panel-toggle{display:inline-flex}}
