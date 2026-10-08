@@ -1,0 +1,19 @@
+{
+  "checkedOn": "2026-10-08",
+  "tool": "pnpm audit",
+  "scope": "Pinned lockfile; advisory registry result at check time; not a security guarantee",
+  "advisories": {},
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 0,
+    "devDependencies": 71,
+    "optionalDependencies": 26,
+    "totalDependencies": 71
+  }
+}

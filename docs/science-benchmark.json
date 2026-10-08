@@ -1,0 +1,45 @@
+{
+  "measuredAt": "2026-10-08T20:39:07.873Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "architecture": "x64",
+  "cpus": "AMD Ryzen 9 5900HX with Radeon Graphics        ",
+  "totalMemoryGiB": 31.418922424316406,
+  "scope": "Node warm module; excludes browser worker startup, IPC, chart rendering and transient peak memory; not weak-laptop certification",
+  "records": [
+    {
+      "rows": 10000,
+      "columns": 5,
+      "csvBytes": 183118,
+      "parseMs": 43.3819,
+      "totalMs": 61.99979999999999,
+      "rssDeltaBytes": 20824064,
+      "regression": {
+        "m": 2,
+        "b": 1,
+        "correlation": 1,
+        "r2": 1,
+        "reason": "",
+        "rmse": 0
+      },
+      "displayedPoints": 2500
+    },
+    {
+      "rows": 50000,
+      "columns": 5,
+      "csvBytes": 982227,
+      "parseMs": 150.6087,
+      "totalMs": 211.05259999999998,
+      "rssDeltaBytes": 85049344,
+      "regression": {
+        "m": 2,
+        "b": 1,
+        "correlation": 1,
+        "r2": 1,
+        "reason": "",
+        "rmse": 0
+      },
+      "displayedPoints": 2500
+    }
+  ]
+}

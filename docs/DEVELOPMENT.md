@@ -42,3 +42,9 @@ node tools/model-cli.mjs save draft.json
 Адрес по умолчанию http://127.0.0.1:4189; изменяется через MODEL_STUDIO_URL. Обновление требует id, revision, folderId и spec из текущей записи. POST /api/library использует action и expectedRevision. MCP доступен локально на /mcp; интеграция с каким-либо ассистентом не обязательна.
 
 Файлы моделей, импортированные пользовательские документы, черновики и история сохранений не должны попадать в публичные коммиты. Проверяйте git status перед публикацией. Обсуждения разработки не являются данными для приложения.
+
+## Научные сборки 2.1
+
+Runtime JS уже включён в web/vendor/. Для пересборки установите pnpm 10, выполните `pnpm install --frozen-lockfile --ignore-scripts`, затем `node tools/build-science.mjs`. esbuild закреплён, lockfile проверяется вместе с локальными сборками. `node tools/science-benchmark.mjs` обновляет измерения ядра. Проверки: `node --test tools/*.test.mjs`, `node tools/check-gallery.mjs`.
+
+lib/compute/ содержит схемы и адаптер statistics-js/1; web/workers/ — worker; web/data/ — UI/клиент. Браузер и Node используют те же вычислительные модули. Маршрут /web/vendor/ нужен относительным импортам из lib/compute; не удаляйте его без изменения import-путей и HTTP-тестов. Пользовательские analysis сохраняются только через обычный versioned API. См. [первый этап](SCIENCE-STAGE-1.md).

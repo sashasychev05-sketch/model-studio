@@ -66,10 +66,10 @@ test('Mutually gravitating free bodies conserve momentum, angular momentum and e
 test('Small physical quantities remain readable rather than rounding to zero',async()=>{
  const src=(await fs.readFile(new URL('../web/scene.js',import.meta.url),'utf8')).replace(/^import[^\n]*\n/gm,'').replace(/\bexport\s+(?=(?:function|const)\b)/g,'');const rt={};vm.createContext(rt);vm.runInContext(src+'\nglobalThis.format=fmt;',rt);assert.match(rt.format(-.00066743),/−|-6,674/);assert.match(rt.format(1e-6),/10⁻⁶/);assert.equal(rt.format(0),'0');assert.equal(rt.format(.01),'0,01');
 });
-test('Offline native field lessons include maps, layer switches and gravity source control',async()=>{
+test('Offline native field lessons include maps and layer switches; gravity source configuration stays in the editor',async()=>{
  const root=new URL('../',import.meta.url),source=(await fs.readFile(new URL('web/standalone.js',root),'utf8')).replace(/^import[^\n]*\n/gm,'').replace('export async function','async function'),generator={esc:String,fetch:async url=>({ok:true,text:()=>fs.readFile(new URL(url.startsWith('/lib/')?url.slice(1):'web/'+url.slice(1),root),'utf8')})};vm.createContext(generator);vm.runInContext(source+'\nglobalThis.generate=standaloneHTML;',generator);
  for(const m of fieldExamples()){const html=await generator.generate(m);assert.doesNotMatch(html,/<script[^>]*\bsrc=/);const nodes=new Map(),runtime={structuredClone,performance:{now:()=>0},requestAnimationFrame(){},document:{getElementById(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'1'});return nodes.get(id);},addEventListener(){}}};vm.createContext(runtime);vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],runtime);assert.match(nodes.get('layers').innerHTML,/data-layer="magnetic"/);nodes.get('step').onclick();const t=nodes.get('time').textContent;nodes.get('layers').onchange({target:{dataset:{layer:'gravity'},checked:false}});assert.equal(nodes.get('time').textContent,t);
-  if(m.bodies.some(b=>b.gravityEnabled)){assert.match(nodes.get('controls').innerHTML,/data-gravity-source="center" checked/);nodes.get('controls').onchange({target:{dataset:{gravitySource:'center'},checked:false}});assert.equal(vm.runInContext('model.bodies[0].gravityEnabled',runtime),false);}
+  if(m.bodies.some(b=>b.gravityEnabled)){assert.doesNotMatch(nodes.get('controls').innerHTML,/data-gravity-source/);assert.equal(vm.runInContext('model.bodies[0].gravityEnabled',runtime),true);}
   assert.doesNotMatch(nodes.get('scene').innerHTML,/NaN|Infinity|undefined/);
  }
 });

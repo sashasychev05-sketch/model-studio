@@ -1,6 +1,6 @@
 # Работа с публичной Модельной
 
-Dependency-free Node.js ES modules; Russian UI. Run `node server.mjs` and open http://127.0.0.1:4189/. Bind to loopback only. This is a source distribution for local use, not a hosted multi-user service.
+Node.js ES modules with locally vendored scientific runtime libraries; no package installation required to run; Russian UI. Run `node server.mjs` and open http://127.0.0.1:4189/. Bind to loopback only. This is a source distribution for local use, not a hosted multi-user service.
 
 `gallery/` is a curated set of exactly 20 reusable templates: 10 physics and 10 mathematics. `data/` is generated on first start, stores personal edits, and is excluded from Git. Never commit user data, imported personal documents, runtime version snapshots, secrets, or internal chat history. Updates must preserve existing data. Use the versioned API /api/library or tools/model-cli.mjs for runtime edits.
 
@@ -11,3 +11,5 @@ Geometry keeps fixed bounds and equal x/y scale; changing an angle must not fit 
 HTML preview and lesson export keep sandbox allow-scripts, never allow-same-origin. Preserve CSP and exact iframe event-source checks. Common theme changes preserve controls. Optimistic revisions protect simultaneous edits. Comparison must advance both experiments atomically using comparisonStep. Teaching features have documented limits; do not claim audits certify arbitrary physical formulas or dimensions.
 
 Keep public docs current in README.md and docs/. Add only useful gallery models within the 10–20 model scope; retain physics and educational assumptions. Factory modules may contain numerical fixtures for additional laws; only gallery/catalog.json determines the shipped library.
+
+Scientific dependencies are pinned in package.json/pnpm-lock.yaml; preserve bundled license notices and vendor manifest hashes. Large operations use the worker registry, never eval or user module URLs. Keep declared units, missing-value policy, fixed chart domains, bounded fitting and explicit Apply/Undo/Save. Update docs/SCIENCE-STAGE-1.md with actual evidence, not claims inferred solely from a passed Node suite.

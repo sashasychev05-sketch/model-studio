@@ -1,0 +1,30 @@
+.scene-pane,.controls-pane{display:contents}
+/* Keep SVG aspect ratios: the scene always uses the same scale on x and y. */
+@media(min-width:900px){
+ .editor-shell.present:not(.html-editor) .simulation{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(320px,1fr);gap:16px;padding:12px 20px 24px;max-width:1600px}
+ .editor-shell.present .scene-pane,.editor-shell.present .controls-pane{display:block;min-width:0}
+ .editor-shell.present .stage-heading{height:28px}
+ .editor-shell.present .scene-toolbar{padding:2px 6px;margin-bottom:8px}
+ .editor-shell.present .scene svg{height:min(48vh,360px);min-height:230px;width:100%;display:block}
+ .editor-shell.present .scene-hint{display:none}
+ .editor-shell.present .transport{padding:10px 0;margin:0}
+ .editor-shell.present .live-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 10px}
+ .editor-shell.present .live-param{padding:8px 10px}
+ .editor-shell.present .live-param>span,.editor-shell.present .live-param strong{font-size:13px}
+ .editor-shell.present .live-param input{margin:8px 0}
+ .editor-shell.present .live-param small{font-size:10px}
+ .editor-shell.present .quantity-row{gap:8px;margin:10px 0;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .editor-shell.present .quantity{padding:8px 12px}
+ .editor-shell.present .quantity strong{font-size:22px;margin-top:3px}
+ .editor-shell.present .quantity>span{font-size:13px}
+ .editor-shell.present .graphs{grid-template-columns:1fr;gap:8px;margin:10px 0}
+ .editor-shell.present .graph{padding:10px}
+ .editor-shell.present .graph svg{width:100%;height:150px;display:block}
+ .editor-shell.present .lesson-note{margin:12px 0;padding:10px;font-size:12px}
+ .editor-shell.present .lesson-note p{font-size:12px;line-height:1.4}
+ .editor-shell.present #teaching-kit{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 20px;flex-wrap:wrap}
+ .editor-shell.present .scenario-strip{padding:0}
+ .editor-shell.present .teaching-bar .btn,.editor-shell.present .scenario-strip .btn{padding:6px 10px;font-size:12px}
+ .editor-shell.present .field-layer-controls{gap:8px;padding:4px;margin:4px 0}
+ .editor-shell.present .field-layer-controls .check{font-size:12px}
+}

@@ -4,17 +4,17 @@
   "spec": {
     "version": 1,
     "title": "Одна сила, разные массы: сравнение опытов",
-    "description": "Два опыта с общей шкалой. Ползунок массы связан со свойством тела.",
+    "description": "Ускорение и торможение постоянной силой. Сравнение масс на общей шкале.",
     "lesson": "Движение и колебания",
     "topic": "Динамика",
     "grade": "all",
     "subject": "physics",
-    "notes": "Материальная точка, постоянная горизонтальная сила, сопротивления и столкновений нет. Начальная скорость равна нулю. Нажмите «Сравнить опыты» и задайте массу B = 2 кг. Оси у обоих опытов одинаковы.",
+    "notes": "Постоянная горизонтальная сила: a = F/m, vₓ = v₀ + at. Отрицательная сила уменьшает положительную скорость; после остановки тело начинает двигаться в обратную сторону. Сопротивления и столкновений нет. В сценарии «Торможение» v₀ = 6 м/с, F = −3 Н: остановка через 2 с.",
     "duration": 2,
     "dt": 0.01,
     "scene": {
-      "minX": -1,
-      "maxX": 15,
+      "minX": -15,
+      "maxX": 25,
       "minY": -4,
       "maxY": 4,
       "grid": true
@@ -22,10 +22,10 @@
     "parameters": [
       {
         "id": "F",
-        "label": "Сила",
+        "label": "Сила вдоль x",
         "unit": "Н",
         "value": 6,
-        "min": 0,
+        "min": -6,
         "max": 6
       },
       {
@@ -38,6 +38,18 @@
         "binding": {
           "body": "body",
           "property": "mass"
+        }
+      },
+      {
+        "id": "initialSpeed",
+        "label": "Начальная скорость",
+        "unit": "м/с",
+        "value": 0,
+        "min": -6,
+        "max": 6,
+        "binding": {
+          "body": "body",
+          "property": "vx"
         }
       }
     ],
@@ -79,7 +91,7 @@
       },
       {
         "id": "speedValue",
-        "label": "Скорость",
+        "label": "Проекция скорости vₓ",
         "expression": "body_vx",
         "unit": "м/с"
       }
@@ -87,31 +99,43 @@
     "graphs": [
       {
         "id": "speedGraph",
-        "label": "Скорость",
+        "label": "Проекция скорости vₓ",
         "unit": "м/с",
         "expression": "body_vx",
         "autoScale": false,
-        "minY": 0,
-        "maxY": 12
+        "minY": -18,
+        "maxY": 18
       }
     ],
     "scenarios": [
       {
         "id": "light",
         "title": "Масса 1 кг",
-        "note": "Предскажите ускорение, затем сравните с массой 2 кг.",
+        "note": "",
         "parameters": {
           "F": 6,
-          "massControl": 1
+          "massControl": 1,
+          "initialSpeed": 0
         }
       },
       {
         "id": "heavy",
         "title": "Масса 2 кг",
-        "note": "При той же силе ускорение уменьшается вдвое.",
+        "note": "",
         "parameters": {
           "F": 6,
-          "massControl": 2
+          "massControl": 2,
+          "initialSpeed": 0
+        }
+      },
+      {
+        "id": "braking",
+        "title": "Торможение",
+        "note": "",
+        "parameters": {
+          "F": -3,
+          "massControl": 1,
+          "initialSpeed": 6
         }
       }
     ],
@@ -124,8 +148,8 @@
     "invariants": [
       {
         "id": "velocityLaw",
-        "label": "Закон v = at",
-        "expression": "body_vx-F/body_m*t",
+        "label": "Закон vₓ = v₀ + at",
+        "expression": "body_vx-initialSpeed-F/body_m*t",
         "absolute": 1e-8,
         "relative": 0
       }
