@@ -52,12 +52,13 @@ test('Offline/unpublished feeds report failure without affecting the library',as
  const portable=fixture({supported:false});await portable.controller.check();
  assert.equal(portable.controller.get().state,'unsupported');assert.equal(portable.counts().checks,0);
 });
-test('Update requests only accept the catalog main frame in the main window',()=>{
+test('Update requests accept main-window model/filter routes, never guides or subframes',()=>{
  const mainFrame={url:'http://127.0.0.1:4190/'},webContents={mainFrame},window={webContents,isDestroyed:()=>false};
  const sender={sender:webContents,senderFrame:mainFrame};
  assert.equal(trustedUpdateSender(sender,window,'http://127.0.0.1:4190'),true);
  assert.equal(trustedUpdateSender({...sender,senderFrame:{url:mainFrame.url}},window,'http://127.0.0.1:4190'),false);
  assert.equal(trustedUpdateSender({...sender,sender:{}},window,'http://127.0.0.1:4190'),false);
+ for(const query of ['?model=gallery_circle','?analysis=1','?sort=topic&folder=gallery_physics']){mainFrame.url='http://127.0.0.1:4190/'+query;assert.equal(trustedUpdateSender(sender,window,'http://127.0.0.1:4190'),true);}
  mainFrame.url='http://127.0.0.1:4190/desktop.html';assert.equal(trustedUpdateSender(sender,window,'http://127.0.0.1:4190'),false);
  mainFrame.url='https://example.com/';assert.equal(trustedUpdateSender(sender,window,'http://127.0.0.1:4190'),false);
 });

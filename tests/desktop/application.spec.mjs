@@ -20,6 +20,7 @@ test('Desktop window is isolated, exports HTML and keeps saved analysis through 
    expect(await desktop.evaluate(()=>globalThis.updateDialogMessages[0])).toContain('установленной Windows-версии');
   }
   await page.getByRole('button',{name:'Анализ данных',exact:true}).click();await page.getByRole('button',{name:'Открыть пример',exact:true}).click();
+  expect((await page.evaluate(()=>window.modelStudio.updateStatus())).currentVersion).toBe(await desktop.evaluate(({app})=>app.getVersion()));
   expect(await page.evaluate(()=>window.dispatchEvent(new Event('beforeunload',{cancelable:true})))).toBe(false);
   await page.getByRole('button',{name:'Сохранить анализ',exact:true}).click();await expect(page.locator('.data-status')).toContainText('Сохранено на этом компьютере');
   expect(await page.evaluate(()=>window.dispatchEvent(new Event('beforeunload',{cancelable:true})))).toBe(true);
@@ -28,6 +29,7 @@ test('Desktop window is isolated, exports HTML and keeps saved analysis through 
   await page.getByRole('button',{name:'Анализ данных',exact:true}).click();await expect(page.getByRole('heading',{name:'Выброс: среднее и медиана',exact:true})).toBeVisible();
   await page.locator('[data-a="back"]').click();await page.locator('[data-open="gallery_circle"]').first().click();
   const frame=page.frameLocator('#html-frame');await expect(frame.locator('input[type="range"]').first()).toBeVisible();
+  expect((await page.evaluate(()=>window.modelStudio.updateStatus())).currentVersion).toBe(await desktop.evaluate(({app})=>app.getVersion()));
   expect(await frame.locator('body').evaluate(()=>typeof window.modelStudio)).toBe('undefined');
   const output=testInfo.outputPath('desktop-export.html');
   await desktop.evaluate(({BrowserWindow},file)=>{BrowserWindow.getAllWindows()[0].webContents.session.once('will-download',(_event,item)=>item.setSavePath(file));},output);

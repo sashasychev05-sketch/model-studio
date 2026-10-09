@@ -2,8 +2,8 @@
 // Network/download integrity and optional Authenticode verification are provided
 // by electron-updater; the feed is built into app-update.yml by the packager.
 export function trustedUpdateSender(event,window,origin){
- return !!window&&!window.isDestroyed()&&event.sender===window.webContents&&
-  event.senderFrame===window.webContents.mainFrame&&event.senderFrame.url===origin+'/';
+ if(!window||window.isDestroyed()||event.sender!==window.webContents||event.senderFrame!==window.webContents.mainFrame)return false;
+ try{const url=new URL(event.senderFrame.url);return url.origin===origin&&url.pathname==='/';}catch{return false;}
 }
 
 export function createUpdateController({version,supported,getUpdater,ask,notify,closeForInstall,install,progress}){
