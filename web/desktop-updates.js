@@ -3,7 +3,7 @@ let status={state:'idle'};
 export function updateButton(){
  if(!window.modelStudio)return '';
  const labels={checking:'Проверка обновлений…',downloading:`Загрузка обновления · ${Math.round(status.percent||0)}%`,available:`Обновить до ${status.version}`,ready:`Установить ${status.version}`};
- return `<button class="nav-item" data-a="check-updates" ${['checking','downloading','installing'].includes(status.state)?'disabled':''}>${esc(labels[status.state]||'Проверить обновления')}</button>`;
+ return `<button type="button" class="nav-item" data-a="check-updates" ${['checking','downloading','installing'].includes(status.state)?'disabled':''}>${esc(labels[status.state]||'Проверить обновления')}</button>`;
 }
 export function initDesktopUpdates(){
  if(!window.modelStudio)return;

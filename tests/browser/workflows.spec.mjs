@@ -12,8 +12,9 @@ test('Catalog, native and HTML experiments retain controls across themes and fit
  await page.locator('[data-open="gallery_circle"]').first().click();
  const frame=page.frameLocator('#html-frame'),slider=frame.locator('input[type="range"]').first();
  await expect(slider).toBeVisible();const value=await slider.inputValue();
+ await page.getByRole('button',{name:'Настройки приложения',exact:true}).click();
  const theme=page.locator('select[aria-label="Тема приложения"]');
- await theme.selectOption('black');
+ await theme.selectOption('black');await page.locator('[data-close-dialog]').click();
  await expect(slider).toHaveValue(value);
  await page.locator('[data-a="back"]').click();await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);

@@ -15,7 +15,7 @@ async function body(req,limit=16*1024*1024){const parts=[];let bytes=0;for await
 export async function startServer({port=Number(process.env.MODEL_STUDIO_PORT??4189)}={}){
 await initialize();
 const server=http.createServer(async(req,res)=>{try{const host=req.headers.host??'';if(!/^(127\.0\.0\.1|localhost):\d+$/.test(host))return json(res,403,{error:'Only local access is supported'});const url=new URL(req.url,'http://'+host);res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');if(req.method==='POST'){if(req.headers.origin&&req.headers.origin!==url.origin)return json(res,403,{error:'Недопустимый источник'});if(req.headers['sec-fetch-site']==='cross-site')return json(res,403,{error:'Недопустимый источник'});}
- if(url.pathname==='/api/health')return json(res,200,{app:'model-studio',version:2,release:'2.3.1'});
+ if(url.pathname==='/api/health')return json(res,200,{app:'model-studio',version:2,release:'2.4.0'});
  if(url.pathname==='/api/analysis'&&req.method==='GET')return json(res,200,await getWorkspace());
  if(url.pathname==='/api/analysis'&&req.method==='POST')return json(res,200,await saveWorkspace(await body(req)));
  if(url.pathname==='/api/backup'&&req.method==='GET'){res.setHeader('Content-Disposition','attachment; filename="model-studio-backup.json"');return json(res,200,await exportBackup());}
@@ -31,7 +31,7 @@ const server=http.createServer(async(req,res)=>{try{const host=req.headers.host?
  const requested=url.pathname==='/'?'/index.html':url.pathname;
  let file;if(requested.startsWith('/lib/')||requested.startsWith('/web/vendor/'))file=path.join(root,requested);else file=path.join(root,'web',requested);
  if(!file.startsWith(root+path.sep)||requested.includes('..'))return json(res,403,{error:'Forbidden'});
- const ext=path.extname(file),type={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.json':'application/json; charset=utf-8'}[ext];if(!type)return json(res,404,{error:'Not found'});
+ const ext=path.extname(file),type={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.json':'application/json; charset=utf-8'}[ext];if(!type)return json(res,404,{error:'Not found'});
  const content=await fs.readFile(file);res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"});res.end(content);
  }catch(e){if(e.code==='ENOENT')return json(res,404,{error:'Not found'});console.error(e.message);json(res,e instanceof AppError?e.status:400,{error:e.message??'Не удалось выполнить действие'});}});
 await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(port,'127.0.0.1',()=>{server.removeListener('error',reject);resolve();});});

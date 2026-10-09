@@ -11,6 +11,7 @@ test('Desktop window is isolated, exports HTML and keeps saved analysis through 
   let page=await desktop.firstWindow();await expect(page.locator('.model-card')).toHaveCount(20);
   const prefs=await desktop.evaluate(({BrowserWindow})=>{const p=BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences();return {nodeIntegration:p.nodeIntegration,contextIsolation:p.contextIsolation,sandbox:p.sandbox};});
   expect(prefs).toEqual({nodeIntegration:false,contextIsolation:true,sandbox:true});expect(await page.evaluate(()=>typeof process)).toBe('undefined');
+  await page.getByRole('button',{name:'Настройки приложения',exact:true}).click();
   await expect(page.getByRole('button',{name:'Проверить обновления',exact:true})).toBeVisible();
   // Stub native dialogs, not the updater or IPC; source/ZIP mode never contacts a feed.
   await desktop.evaluate(({dialog})=>{globalThis.updateDialogMessages=[];dialog.showMessageBox=async(...args)=>{globalThis.updateDialogMessages.push(args.at(-1).message);return {response:0};};});
@@ -19,6 +20,7 @@ test('Desktop window is isolated, exports HTML and keeps saved analysis through 
    await expect.poll(()=>desktop.evaluate(()=>globalThis.updateDialogMessages.length)).toBe(1);
    expect(await desktop.evaluate(()=>globalThis.updateDialogMessages[0])).toContain('установленной Windows-версии');
   }
+  await page.locator('[data-close-dialog]').click();
   await page.getByRole('button',{name:'Анализ данных',exact:true}).click();await page.getByRole('button',{name:'Открыть пример',exact:true}).click();
   expect((await page.evaluate(()=>window.modelStudio.updateStatus())).currentVersion).toBe(await desktop.evaluate(({app})=>app.getVersion()));
   expect(await page.evaluate(()=>window.dispatchEvent(new Event('beforeunload',{cancelable:true})))).toBe(false);
