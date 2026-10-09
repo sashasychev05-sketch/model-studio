@@ -2,7 +2,7 @@ import {test,expect,_electron as electron} from '@playwright/test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve('.');
-function launch(profile){return electron.launch({...(process.env.MODEL_STUDIO_TEST_EXE?{executablePath:process.env.MODEL_STUDIO_TEST_EXE,args:[]}:{args:['.']}),cwd:root,env:{...process.env,MODEL_STUDIO_PROFILE_DIR:profile},timeout:60000});}
+function launch(profile){return electron.launch({...(process.env.MODEL_STUDIO_TEST_EXE?{executablePath:process.env.MODEL_STUDIO_TEST_EXE,args:[]}:{args:['.']}),cwd:root,env:{...process.env,MODEL_STUDIO_PROFILE_DIR:profile,MODEL_STUDIO_DISABLE_UPDATE_CHECK:'1'},timeout:60000});}
 
 test('Desktop window is isolated, exports HTML and keeps saved analysis through a restart',async({},testInfo)=>{
  const profile=path.resolve('work','desktop-test-'+crypto.randomUUID());
@@ -11,13 +11,24 @@ test('Desktop window is isolated, exports HTML and keeps saved analysis through 
   let page=await desktop.firstWindow();await expect(page.locator('.model-card')).toHaveCount(20);
   const prefs=await desktop.evaluate(({BrowserWindow})=>{const p=BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences();return {nodeIntegration:p.nodeIntegration,contextIsolation:p.contextIsolation,sandbox:p.sandbox};});
   expect(prefs).toEqual({nodeIntegration:false,contextIsolation:true,sandbox:true});expect(await page.evaluate(()=>typeof process)).toBe('undefined');
+  await expect(page.getByRole('button',{name:'Проверить обновления',exact:true})).toBeVisible();
+  // Stub native dialogs, not the updater or IPC; source/ZIP mode never contacts a feed.
+  await desktop.evaluate(({dialog})=>{globalThis.updateDialogMessages=[];dialog.showMessageBox=async(...args)=>{globalThis.updateDialogMessages.push(args.at(-1).message);return {response:0};};});
+  if(!(await page.evaluate(()=>window.modelStudio.updateStatus())).supported){
+   await page.getByRole('button',{name:'Проверить обновления',exact:true}).click();
+   await expect.poll(()=>desktop.evaluate(()=>globalThis.updateDialogMessages.length)).toBe(1);
+   expect(await desktop.evaluate(()=>globalThis.updateDialogMessages[0])).toContain('установленной Windows-версии');
+  }
   await page.getByRole('button',{name:'Анализ данных',exact:true}).click();await page.getByRole('button',{name:'Открыть пример',exact:true}).click();
+  expect(await page.evaluate(()=>window.dispatchEvent(new Event('beforeunload',{cancelable:true})))).toBe(false);
   await page.getByRole('button',{name:'Сохранить анализ',exact:true}).click();await expect(page.locator('.data-status')).toContainText('Сохранено на этом компьютере');
+  expect(await page.evaluate(()=>window.dispatchEvent(new Event('beforeunload',{cancelable:true})))).toBe(true);
   await page.screenshot({path:testInfo.outputPath('desktop-analysis.png'),fullPage:true});
   await desktop.close();desktop=await launch(profile);page=await desktop.firstWindow();await expect(page.locator('.model-card')).toHaveCount(20);
   await page.getByRole('button',{name:'Анализ данных',exact:true}).click();await expect(page.getByRole('heading',{name:'Выброс: среднее и медиана',exact:true})).toBeVisible();
   await page.locator('[data-a="back"]').click();await page.locator('[data-open="gallery_circle"]').first().click();
   const frame=page.frameLocator('#html-frame');await expect(frame.locator('input[type="range"]').first()).toBeVisible();
+  expect(await frame.locator('body').evaluate(()=>typeof window.modelStudio)).toBe('undefined');
   const output=testInfo.outputPath('desktop-export.html');
   await desktop.evaluate(({BrowserWindow},file)=>{BrowserWindow.getAllWindows()[0].webContents.session.once('will-download',(_event,item)=>item.setSavePath(file));},output);
   await page.getByRole('button',{name:'Экспорт',exact:true}).click();await page.getByRole('button',{name:'Готовая демонстрация · HTML',exact:true}).click();

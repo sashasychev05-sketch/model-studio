@@ -1,15 +1,18 @@
-import {app,BrowserWindow,Menu,dialog} from 'electron';
+import {app,BrowserWindow,Menu,dialog,ipcMain} from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';
+import {createUpdateController,trustedUpdateSender} from './updates.mjs';
 
 app.setName('Модельная');
 if(process.env.MODEL_STUDIO_PROFILE_DIR)app.setPath('userData',path.resolve(process.env.MODEL_STUDIO_PROFILE_DIR));
-let server,mainWindow,origin;
+let server,mainWindow,origin,updates,installing=false;
 const profile=app.getPath('userData');
 const preferences=path.join(profile,'desktop.json');
 const here=path.dirname(fileURLToPath(import.meta.url));
-const browserOptions={width:1360,height:900,minWidth:390,minHeight:560,title:'Модельная',backgroundColor:'#f6f8fc',show:false,autoHideMenuBar:true,webPreferences:{nodeIntegration:false,nodeIntegrationInWorker:false,nodeIntegrationInSubFrames:false,contextIsolation:true,sandbox:true,webSecurity:true,webviewTag:false}};
+const require=createRequire(import.meta.url);
+const browserOptions={width:1360,height:900,minWidth:390,minHeight:560,title:'Модельная',backgroundColor:'#f6f8fc',show:false,autoHideMenuBar:false,webPreferences:{preload:path.join(here,'preload.cjs'),nodeIntegration:false,nodeIntegrationInWorker:false,nodeIntegrationInSubFrames:false,contextIsolation:true,sandbox:true,webSecurity:true,webviewTag:false}};
 const internal=url=>{try{return new URL(url).origin===origin;}catch{return false;}};
 
 function protectWindow(window){
@@ -37,10 +40,43 @@ async function openWindow(){
  await mainWindow.loadURL(origin+'/');
 }
 
+async function setupUpdates(){
+ let installed=false;
+ if(app.isPackaged&&process.platform==='win32'){
+  try{await fs.access(path.join(path.dirname(process.execPath),'Uninstall ModelStudio.exe'));await fs.access(path.join(process.resourcesPath,'app-update.yml'));installed=true;}catch{}
+ }
+ updates=createUpdateController({
+  version:app.getVersion(),supported:installed,
+  getUpdater:async()=>{
+   const {autoUpdater}=app.isPackaged?require('./updater-runtime.cjs'):require('electron-updater');
+   autoUpdater.on('error',()=>{if(installing){installing=false;openWindow();dialog.showErrorBox('Не удалось установить обновление','Приложение открыто снова. Попробуйте установить обновление позже.');}});
+   return autoUpdater;
+  },
+  ask:async options=>(await dialog.showMessageBox(mainWindow??undefined,options)).response,
+  notify:status=>{if(mainWindow&&!mainWindow.isDestroyed())mainWindow.webContents.send('model-studio:update-status',status);},
+  progress:value=>mainWindow?.setProgressBar(value),
+  closeForInstall:async()=>{
+   // Run the same unsaved-work check as a normal close before starting an installer.
+   if(mainWindow&&!mainWindow.isDestroyed()&&!await mainWindow.webContents.executeJavaScript("window.dispatchEvent(new Event('beforeunload',{cancelable:true}))")){
+    await dialog.showMessageBox(mainWindow,{type:'info',title:'Сначала сохраните работу',message:'Есть несохранённые изменения.',detail:'Сохраните модель и анализ либо отмените свои правки, затем снова нажмите «Проверить обновления». Загруженный файл останется готовым к установке.',buttons:['Продолжить работу']});return false;
+   }
+   installing=true;
+   for(const window of BrowserWindow.getAllWindows())window.destroy();
+   return true;
+  },
+  install:engine=>engine.quitAndInstall(false,true)
+ });
+ for(const [channel,handler] of [['model-studio:check-updates',()=>updates.check()],['model-studio:update-status',()=>updates.get()]]){
+  ipcMain.handle(channel,(event)=>{if(!trustedUpdateSender(event,mainWindow,origin))throw new Error('Недопустимый источник запроса обновления');return handler();});
+ }
+ Menu.setApplicationMenu(Menu.buildFromTemplate([{label:'Приложение',submenu:[{label:'Проверить обновления',click:()=>updates.check()},{type:'separator'},{label:'Выход',role:'quit'}]},{label:'Правка',submenu:[{role:'undo',label:'Отменить'},{role:'redo',label:'Повторить'},{type:'separator'},{role:'cut',label:'Вырезать'},{role:'copy',label:'Копировать'},{role:'paste',label:'Вставить'},{role:'selectAll',label:'Выделить всё'}]}]));
+ if(installed&&process.env.MODEL_STUDIO_DISABLE_UPDATE_CHECK!=='1')setTimeout(()=>updates.check({interactive:false}),15000).unref();
+}
+
 if(!app.requestSingleInstanceLock())app.quit();
 else{
  app.on('second-instance',()=>{if(mainWindow){if(mainWindow.isMinimized())mainWindow.restore();mainWindow.show();mainWindow.focus();}else if(origin)openWindow();});
- app.on('window-all-closed',()=>app.quit());
+ app.on('window-all-closed',()=>{if(!installing)app.quit();});
  app.on('will-quit',()=>{server?.close();server?.closeAllConnections();});
  app.whenReady().then(async()=>{
  try{
@@ -52,7 +88,7 @@ else{
   try{server=await startServer({port});}catch(error){if(error.code!=='EADDRINUSE')throw error;server=await startServer({port:0});}
   port=server.address().port;origin='http://127.0.0.1:'+port;
   await fs.writeFile(preferences,JSON.stringify({port}),'utf8');
-  Menu.setApplicationMenu(null);
+  await setupUpdates();
   await openWindow();
  }catch(error){dialog.showErrorBox('Не удалось открыть Модельную',error.message);app.quit();}
  });

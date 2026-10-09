@@ -15,7 +15,7 @@ async function body(req,limit=16*1024*1024){const parts=[];let bytes=0;for await
 export async function startServer({port=Number(process.env.MODEL_STUDIO_PORT??4189)}={}){
 await initialize();
 const server=http.createServer(async(req,res)=>{try{const host=req.headers.host??'';if(!/^(127\.0\.0\.1|localhost):\d+$/.test(host))return json(res,403,{error:'Only local access is supported'});const url=new URL(req.url,'http://'+host);res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');if(req.method==='POST'){if(req.headers.origin&&req.headers.origin!==url.origin)return json(res,403,{error:'Недопустимый источник'});if(req.headers['sec-fetch-site']==='cross-site')return json(res,403,{error:'Недопустимый источник'});}
- if(url.pathname==='/api/health')return json(res,200,{app:'model-studio',version:2,release:'2.3.0'});
+ if(url.pathname==='/api/health')return json(res,200,{app:'model-studio',version:2,release:'2.3.1'});
  if(url.pathname==='/api/analysis'&&req.method==='GET')return json(res,200,await getWorkspace());
  if(url.pathname==='/api/analysis'&&req.method==='POST')return json(res,200,await saveWorkspace(await body(req)));
  if(url.pathname==='/api/backup'&&req.method==='GET'){res.setHeader('Content-Disposition','attachment; filename="model-studio-backup.json"');return json(res,200,await exportBackup());}

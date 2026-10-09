@@ -1,6 +1,6 @@
 {
   "name": "model-studio",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "type": "module",
   "scripts": {
     "start": "electron .",
@@ -13,7 +13,8 @@
     "package:desktop": "node tools/package-desktop.mjs",
     "test:browser": "playwright test",
     "test:desktop": "playwright test --config playwright.desktop.config.mjs",
-    "start:web": "node server.mjs"
+    "start:web": "node server.mjs",
+    "package:installer": "node tools/package-installer.mjs"
   },
   "engines": {
     "node": ">=22.13"
@@ -24,11 +25,17 @@
     "@observablehq/plot": "0.6.17",
     "@playwright/test": "1.64.0",
     "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "electron-updater": "6.8.9",
     "esbuild": "0.25.12",
     "papaparse": "5.7.0",
     "simple-statistics": "7.12.1"
   },
   "main": "desktop/main.mjs",
   "productName": "Модельная",
-  "packageManager": "pnpm@11.25.0"
+  "packageManager": "pnpm@11.25.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sashasychev05-sketch/model-studio.git"
+  }
 }
