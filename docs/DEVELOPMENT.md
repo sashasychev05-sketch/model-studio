@@ -1,25 +1,31 @@
 # Разработка
 
-Проект не требует внешних пакетов. Нужен Node.js 22.13+; интерфейс использует стандартные ES-модули браузера.
+Запуск веб-версии не требует установки внешних пакетов. Нужен Node.js 22.13+; интерфейс использует стандартные ES-модули браузера.
 
 ## Карта файлов
 
 - `server.mjs` — локальный HTTP-сервис, статика, API и изолированный показ HTML.
+- `desktop/` — отдельное окно, изолированный мост обновлений и управление установкой.
 - `lib/model.js`, `lib/authoring.js` — схема модели, проверка и редактирование ссылок.
 - `lib/engine.js`, `lib/interaction.js` — численный расчёт и взаимодействия.
 - `lib/teaching.js`, `lib/measurements.js`, `lib/audit.js` — построения, измерения и аудит.
 - `lib/storage.mjs` — атомарное сохранение, ревизии и история.
+- `lib/library-backup.mjs` — проверка резервных копий и восстановление библиотеки.
 - `gallery/` — ровно 20 подготовленных примеров и восемь разделов.
 - `lib/public-gallery.mjs` — загрузка начальной публичной библиотеки.
 - `web/` — каталог, инспектор, сцена, экспорт, темы и встроенное руководство.
 - `tools/*.test.mjs` — проверки законов, файлового сервиса, редактора и экспорта.
+- `tools/package-desktop.mjs`, `tools/package-installer.mjs`, `tools/publish-release.mjs` — сборки Windows и публикация проверенного выпуска.
+- `tests/`, `playwright*.config.mjs` — браузерные и desktop-сценарии в изолированных профилях.
+- `.github/workflows/check.yml` — проверки Windows/Linux, сборка, проверка установки и публикация по тегу.
 - `tools/test-examples.mjs` — небольшие расчётные фикстуры; они не добавляются в каталог.
 
-Фабрики в lib содержат расчётные определения для регрессионных проверок и миниатюр. Библиотека пользователя определяется gallery/catalog.json при первом запуске, затем файлами data/. Установщики старых больших наборов из публичной версии удалены.
+Фабрики в lib содержат расчётные определения для регрессионных проверок и миниатюр. Библиотека пользователя определяется gallery/catalog.json при первом запуске, затем файлами data/ в исходной версии или пользовательским каталогом отдельного приложения. Установщик текущей версии собирается из этого репозитория; архивные большие наборы моделей не входят в поставку.
 
 ## Запуск проверок
 
 ```sh
+pnpm install --frozen-lockfile --ignore-scripts
 node --test tools/*.test.mjs
 node tools/check-gallery.mjs
 node tools/build-guide.mjs
@@ -45,6 +51,16 @@ node tools/model-cli.mjs save draft.json
 
 ## Научные сборки 2.1
 
-Runtime JS уже включён в web/vendor/. Для пересборки установите pnpm 10, выполните `pnpm install --frozen-lockfile --ignore-scripts`, затем `node tools/build-science.mjs`. esbuild закреплён, lockfile проверяется вместе с локальными сборками. `node tools/science-benchmark.mjs` обновляет измерения ядра. Проверки: `node --test tools/*.test.mjs`, `node tools/check-gallery.mjs`.
+Runtime JS уже включён в web/vendor/. Для пересборки установите pnpm 11.25.0, выполните `pnpm install --frozen-lockfile --ignore-scripts`, затем `node tools/build-science.mjs`. esbuild закреплён, lockfile проверяется вместе с локальными сборками. `node tools/science-benchmark.mjs` обновляет измерения ядра. Проверки: `node --test tools/*.test.mjs`, `node tools/check-gallery.mjs`.
 
 lib/compute/ содержит схемы и адаптер statistics-js/1; web/workers/ — worker; web/data/ — UI/клиент. Браузер и Node используют те же вычислительные модули. Маршрут /web/vendor/ нужен относительным импортам из lib/compute; не удаляйте его без изменения import-путей и HTTP-тестов. Пользовательские analysis сохраняются только через обычный versioned API. См. [первый этап](SCIENCE-STAGE-1.md).
+
+## Desktop и проверки пользовательских сценариев
+
+См. [Модельная 2.3.1](DESKTOP.md). Для разработки отдельного окна: pnpm install --frozen-lockfile, node node_modules/electron/install.js, pnpm desktop. Для Chromium: pnpm exec playwright install chromium, pnpm test:browser. Windows-приложение проверяется pnpm test:desktop. GitHub Actions проверяет собранный exe, загрузку обновлений и установку с сохранением анализа, выдаёт ZIP и NSIS-артефакты. Все проверки используют отдельные каталоги work/. Для CI используется Node.js 24 и закреплённый pnpm 11.25.0.
+
+Сервер экспортирует startServer для desktop, но прямой node server.mjs сохраняет прежнее поведение. GET/POST /api/analysis используют optimistic revision. GET /api/backup выгружает библиотеку; POST /api/backup/preview валидирует и возвращает expectedState; POST /api/backup/restore проверяет этот снимок, сохраняет прежний каталог и заменяет библиотеку. Подробные лимиты и восстановление после прерывания описаны в DESKTOP.md.
+
+Версия 2.3.1 добавляет pnpm package:installer (NSIS), desktop/preload.cjs с ограниченным IPC и desktop/updates.mjs с явными подтверждениями. tools/desktop-stage.mjs собирает минимальную поставку и лицензии updater. Продуктовые данные остаются вне установки; ZIP не обновляется автоматически. На теге vVERSION CI публикует проверенный установщик и latest.yml через tools/publish-release.mjs. Для цифровой подписи и процедуры выпуска см. DESKTOP.md.
+
+Опубликованные теги и установщики не заменяйте: исправление выпуска получает новый номер версии. Обновление main само по себе не выпускает новую программу для пользователей; публикация запускается тегом соответствующей версии. [История выпусков](RELEASE.md) и [план развития](ROADMAP.md) должны отражать фактические возможности и проверки.
