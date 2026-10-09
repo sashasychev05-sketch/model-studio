@@ -70,9 +70,12 @@ test('Legends describe visible marks and distinguish data, regression and the cu
  const histogram=chartLegend(r,{chart:'histogram'});assert.match(histogram,/Число наблюдений/);assert.doesNotMatch(histogram,/регрессии|модели/);
  assert.doesNotMatch(chartLegend({...r,regression:{}},{chart:'scatter',expression:'<script>'}),/<script>/);
 });
-test('Standalone data workspace is separate from scene measurements and keeps its session',()=>{
+test('Standalone data workspace is separate from scene measurements and keeps its session',async()=>{
  const S={analysisStandalone:true,tab:'data',draft:emptyModel(),record:null};
  const api=initAnalysis(S,{document:{querySelector:()=>null}});
+ const previous=globalThis.fetch;
+ globalThis.fetch=async()=>({ok:true,json:async()=>({revision:0,analysis:null})});
+ try{await api.loadStandalone();}finally{globalThis.fetch=previous;}
  const standalone=api.panel();assert.match(standalone,/Анализ таблицы/);assert.match(standalone,/Среднее и выброс/);assert.doesNotMatch(standalone,/Записать расчёт в таблицу|Вернуться к сцене/);
  api.remember();api.reset();assert.match(api.panel(),/Анализ таблицы/);
  S.analysisStandalone=false;api.reset();const orbit=api.panel();assert.match(orbit,/Записать расчёт в таблицу/);assert.doesNotMatch(orbit,/Среднее и выброс|Корреляция и совпадение/);

@@ -1,6 +1,6 @@
 # Разработка
 
-Проект не требует внешних пакетов. Нужен Node.js 22.13+; интерфейс использует стандартные ES-модули браузера.
+Запуск веб-версии не требует установки внешних пакетов. Нужен Node.js 22.13+; интерфейс использует стандартные ES-модули браузера.
 
 ## Карта файлов
 
@@ -45,6 +45,12 @@ node tools/model-cli.mjs save draft.json
 
 ## Научные сборки 2.1
 
-Runtime JS уже включён в web/vendor/. Для пересборки установите pnpm 10, выполните `pnpm install --frozen-lockfile --ignore-scripts`, затем `node tools/build-science.mjs`. esbuild закреплён, lockfile проверяется вместе с локальными сборками. `node tools/science-benchmark.mjs` обновляет измерения ядра. Проверки: `node --test tools/*.test.mjs`, `node tools/check-gallery.mjs`.
+Runtime JS уже включён в web/vendor/. Для пересборки установите pnpm 11.25.0, выполните `pnpm install --frozen-lockfile --ignore-scripts`, затем `node tools/build-science.mjs`. esbuild закреплён, lockfile проверяется вместе с локальными сборками. `node tools/science-benchmark.mjs` обновляет измерения ядра. Проверки: `node --test tools/*.test.mjs`, `node tools/check-gallery.mjs`.
 
 lib/compute/ содержит схемы и адаптер statistics-js/1; web/workers/ — worker; web/data/ — UI/клиент. Браузер и Node используют те же вычислительные модули. Маршрут /web/vendor/ нужен относительным импортам из lib/compute; не удаляйте его без изменения import-путей и HTTP-тестов. Пользовательские analysis сохраняются только через обычный versioned API. См. [первый этап](SCIENCE-STAGE-1.md).
+
+## Desktop и проверки пользовательских сценариев
+
+См. [Модельная 2.3](DESKTOP.md). Для разработки отдельного окна: pnpm install --frozen-lockfile, node node_modules/electron/install.js, pnpm desktop. Для Chromium: pnpm exec playwright install chromium, pnpm test:browser. Windows-приложение проверяется pnpm test:desktop. GitHub Actions проверяет также собранный exe и выдаёт ZIP-артефакт. Все проверки используют отдельные каталоги work/.
+
+Сервер экспортирует startServer для desktop, но прямой node server.mjs сохраняет прежнее поведение. GET/POST /api/analysis используют optimistic revision. GET /api/backup выгружает библиотеку; POST /api/backup/preview валидирует и возвращает expectedState; POST /api/backup/restore проверяет этот снимок, сохраняет прежний каталог и заменяет библиотеку. Подробные лимиты и восстановление после прерывания описаны в DESKTOP.md.
