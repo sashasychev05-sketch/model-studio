@@ -60,14 +60,18 @@ jobs:
           CSC_LINK: ${{ secrets.WINDOWS_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.WINDOWS_CSC_KEY_PASSWORD }}
           MODEL_STUDIO_REQUIRE_SIGNING: ${{ vars.WINDOWS_REQUIRE_SIGNING }}
-      - name: Проверить загрузку и сохранность при обновлении
+      - name: Проверить реальную загрузку обновления
         shell: pwsh
         run: |
           $env:MODEL_STUDIO_TEST_EXE = Join-Path (Get-Location) 'dist/installer/win-unpacked/ModelStudio.exe'
           $releaseVersion = (Get-Content package.json | ConvertFrom-Json).version
           $env:MODEL_STUDIO_UPDATE_ASSET = Join-Path (Get-Location) "dist/installer/ModelStudio-Setup-$releaseVersion-x64.exe"
+          pnpm test:desktop --grep "Desktop window|Real NSIS updater"
+      - name: Проверить установку и сохранность при обновлении
+        shell: pwsh
+        run: |
           $env:MODEL_STUDIO_INSTALLER_TEST = '1'
-          pnpm test:desktop
+          pnpm test:desktop --grep "NSIS installs"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Windows-installer
