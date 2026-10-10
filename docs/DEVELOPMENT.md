@@ -59,10 +59,12 @@ lib/compute/ содержит схемы и адаптер statistics-js/1; web/
 
 ## Desktop и проверки пользовательских сценариев
 
-См. [Модельная 2.3.1](DESKTOP.md). Для разработки отдельного окна: pnpm install --frozen-lockfile, node node_modules/electron/install.js, pnpm desktop. Для Chromium: pnpm exec playwright install chromium, pnpm test:browser. Windows-приложение проверяется pnpm test:desktop. GitHub Actions проверяет собранный exe, загрузку обновлений и установку с сохранением анализа, выдаёт ZIP и NSIS-артефакты. Все проверки используют отдельные каталоги work/. Для CI используется Node.js 24 и закреплённый pnpm 11.25.0.
+См. [Модельная 2.4.0](DESKTOP.md). Для разработки отдельного окна: pnpm install --frozen-lockfile, node node_modules/electron/install.js, pnpm desktop. Для Chromium: pnpm exec playwright install chromium, pnpm test:browser. Windows-приложение проверяется pnpm test:desktop. GitHub Actions проверяет собранный exe, загрузку обновлений и установку с сохранением анализа, выдаёт ZIP и NSIS-артефакты. Все проверки используют отдельные каталоги work/. Для CI используется Node.js 24 и закреплённый pnpm 11.25.0.
 
 Сервер экспортирует startServer для desktop, но прямой node server.mjs сохраняет прежнее поведение. GET/POST /api/analysis используют optimistic revision. GET /api/backup выгружает библиотеку; POST /api/backup/preview валидирует и возвращает expectedState; POST /api/backup/restore проверяет этот снимок, сохраняет прежний каталог и заменяет библиотеку. Подробные лимиты и восстановление после прерывания описаны в DESKTOP.md.
 
 Версия 2.3.1 добавляет pnpm package:installer (NSIS), desktop/preload.cjs с ограниченным IPC и desktop/updates.mjs с явными подтверждениями. tools/desktop-stage.mjs собирает минимальную поставку и лицензии updater. Продуктовые данные остаются вне установки; ZIP не обновляется автоматически. На теге vVERSION CI публикует проверенный установщик и latest.yml через tools/publish-release.mjs. Для цифровой подписи и процедуры выпуска см. DESKTOP.md.
+
+В 2.4 метаданные версии и канала находятся в lib/app-info.js; общие настройки — web/app-settings.js. docs/RELEASE.md содержит отдельный раздел каждой стабильной версии: tools/release-notes.mjs извлекает только совпадающий раздел для страницы GitHub Release. Публикация требует совпадения версии package.json и APP_VERSION и канала stable. Пересборка встроенной справки — node tools/build-guide.mjs.
 
 Опубликованные теги и установщики не заменяйте: исправление выпуска получает новый номер версии. Обновление main само по себе не выпускает новую программу для пользователей; публикация запускается тегом соответствующей версии. [История выпусков](RELEASE.md) и [план развития](ROADMAP.md) должны отражать фактические возможности и проверки.

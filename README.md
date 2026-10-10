@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sashasychev05-sketch/model-studio/releases/latest"><img src="https://img.shields.io/github/v/release/sashasychev05-sketch/model-studio?label=версия&color=4f56e8" alt="Последний выпуск"></a>
+  <a href="https://github.com/sashasychev05-sketch/model-studio/releases/tag/v2.4.0"><img src="https://img.shields.io/badge/version-2.4.0-4f56e8" alt="Версия 2.4.0"></a>
   <a href="https://github.com/sashasychev05-sketch/model-studio/actions/workflows/check.yml"><img src="https://github.com/sashasychev05-sketch/model-studio/actions/workflows/check.yml/badge.svg?branch=main" alt="Проверки и Windows-сборка"></a>
   <img src="https://img.shields.io/badge/Windows-x64-0078D4" alt="Windows x64">
   <img src="https://img.shields.io/badge/работает-офлайн-22863a" alt="Работает офлайн">
@@ -64,7 +64,7 @@
 | Поделиться | Редактируемый JSON, автономный HTML, PNG и CSV для сцен конструктора |
 | Сохранить библиотеку | Явное сохранение анализа, резервная копия с историей, проверяемое восстановление и перенос старой папки |
 
-![Конструктор Модельной 2.4: маятник, параметры и графики](docs/screenshots/editor-2.4.png)
+![Конструктор Модельной 2.4: сцена маятника и свойства объектов](docs/screenshots/editor-2.4.png)
 
 ![Автономный HTML для ученика: инструкция и интерактивный опыт](docs/screenshots/student-2.4.png)
 
