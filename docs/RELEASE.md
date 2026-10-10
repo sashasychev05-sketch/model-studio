@@ -1,5 +1,21 @@
 # История выпусков Модельной
 
+## 2.4.0 — 10 октября 2026
+
+**[Скачать установщик Windows x64](https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.0/ModelStudio-Setup-2.4.0-x64.exe)** · [Инструкция установки и обновления](https://github.com/sashasychev05-sketch/model-studio/blob/v2.4.0/docs/DESKTOP.md).
+
+- Настройки собраны за шестерёнкой: темы, панели, резервные копии, перенос, обновления, справка и горячие клавиши.
+- Полноэкранный режим доступен в каталоге, редакторе и анализе; F11 и Esc работают в отдельном Windows-приложении.
+- Перенос прежней папки data проверяет состав и сохраняет модели, историю и анализ, исходную папку и предыдущую библиотеку.
+- Импорт обычных JSON-таблиц, подсказки для CSV/TSV и автоматический пересчёт сохранённого анализа.
+- HTML для ученика включает редактируемую инструкцию и интерактивный опыт. Предпросмотр показывает тот же файл, который скачивается. Открытие не требует приложения, сервера или интернета.
+- Понятные имена экспортов, кнопка «Показать в папке» в Windows и видимые ошибки форм.
+- Исправлена ошибка «Object has been destroyed» при закрытии окна приложения.
+
+Установщик пока без сертификата Windows. Обновление сохраняет библиотеку и требует подтверждения скачивания и установки; обычный выход не устанавливает его автоматически.
+
+[Полное описание 2.4](https://github.com/sashasychev05-sketch/model-studio/blob/v2.4.0/docs/VERSION-2.4.md) · [План новых объектов редактора](https://github.com/sashasychev05-sketch/model-studio/blob/v2.4.0/docs/EDITOR-NEXT.md) · [Проверки выпуска](https://github.com/sashasychev05-sketch/model-studio/actions/workflows/check.yml).
+
 ## 2.3.1 — 9 октября 2026
 
 **[Опубликованный выпуск](https://github.com/sashasychev05-sketch/model-studio/releases/tag/v2.3.1)** · [Установщик Windows x64](https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.3.1/ModelStudio-Setup-2.3.1-x64.exe) · [Инструкция](DESKTOP.md).

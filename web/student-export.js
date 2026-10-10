@@ -1,0 +1,26 @@
+import {esc} from './scene.js';
+import {withHTMLTheme} from '/lib/theme.js';
+import {lessonGuide} from '/lib/lesson-guide.js';
+
+export function studentHTML(model,html,instructions,theme){
+ if(typeof instructions!=='string'||instructions.length>4000)throw Error('Инструкция: максимум 4 000 символов');
+ return withHTMLTheme(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(model.title)} — учебный опыт</title><style>body{margin:0;font:16px/1.6 system-ui;background:#f6f8fc;color:#33415b}main{max-width:1200px;margin:auto;padding:20px}h1{font-size:26px}p{white-space:pre-wrap}details{padding:14px;border:1px solid #8390a8;border-radius:10px;margin-bottom:14px}iframe{width:100%;height:85vh;min-height:480px;border:1px solid #8390a8;border-radius:10px;background:transparent}button{font:inherit;padding:10px;border-radius:8px;border:1px solid #8390a8;background:transparent;color:inherit;cursor:pointer}@media(max-width:480px){main{padding:12px}h1{font-size:22px}}</style></head><body><main><h1>${esc(model.title)}</h1><p>Этот файл работает без интернета. Меняйте параметры в опыте и записывайте результаты отдельно.</p><details open><summary>Инструкция к опыту</summary><p>${esc(instructions)}</p></details><button type="button" id="student-fullscreen">На весь экран</button><p id="student-status" role="status"></p><iframe sandbox="allow-scripts" srcdoc="${esc(html)}" title="${esc(model.title)}"></iframe></main><script>document.getElementById('student-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{document.getElementById('student-status').textContent='Полный экран недоступен. Разверните окно браузера.';}};document.addEventListener('fullscreenchange',()=>{document.getElementById('student-fullscreen').textContent=document.fullscreenElement?'Выйти из полноэкранного режима':'На весь экран';});</script></body></html>`,theme);
+}
+export function studentDialog(env){
+ const model=structuredClone(env.model()),instructions=lessonGuide(model);
+ let cache=null;
+ const prepare=async text=>{const theme=env.theme(),key=theme+'\n'+text;if(cache?.key===key)return cache.html;const html=studentHTML(model,await env.build(model),text,theme);cache={key,html};return html;};
+ env.dialog('Подготовить опыт для ученика',`<div class="student-guide"><ol><li><strong>Редактируемый проект.</strong> Чтобы сохранить собственный вариант в каталоге, создайте копию. JSON передают для дальнейшего редактирования.</li><li><strong>Настройте опыт.</strong> HTML возьмёт текущие параметры открытой модели. Подпишите, что должен проверить ученик.</li><li><strong>Передайте один HTML-файл.</strong> Ученик открывает его двойным щелчком в современном браузере. Приложение и интернет не нужны.</li></ol><button type="button" class="btn quiet" data-a="save-copy">Сохранить копию в каталоге</button><label class="field"><span>Инструкция для ученика</span><textarea name="instructions" aria-label="Инструкция для ученика" rows="8" maxlength="4000">${esc(instructions)}</textarea></label><p>Инструкция войдёт в HTML; сохранённый проект не меняется. Ответы ученик записывает отдельно.</p><button type="button" class="btn quiet" id="student-preview">Предпросмотр HTML для ученика</button><p id="student-preview-status" role="status"></p><div id="student-preview-panel" hidden><button type="button" class="btn quiet" id="student-hide-preview">Скрыть предпросмотр</button><iframe id="student-preview-frame" title="Предпросмотр опыта для ученика" sandbox="allow-scripts" allow="fullscreen"></iframe></div></div>`,'Скачать HTML для ученика',async form=>{
+  const html=await prepare(form.get('instructions'));env.download(env.fileName(model.title)+'-учебный-опыт.html',html,'text/html;charset=utf-8');
+  env.toast('HTML готов: передайте ученику один файл.');
+ });
+ const dialog=env.document.querySelector('#dialog'),input=dialog.querySelector('[name="instructions"]'),button=dialog.querySelector('#student-preview'),status=dialog.querySelector('#student-preview-status'),panel=dialog.querySelector('#student-preview-panel'),frame=dialog.querySelector('#student-preview-frame');
+ dialog.classList.add('student-export-dialog');
+ input.addEventListener('input',()=>{if(!panel.hidden)status.textContent='Инструкция изменена. Обновите предпросмотр; скачивание использует новый текст.';});
+ dialog.querySelector('#student-hide-preview').onclick=()=>{panel.hidden=true;frame.removeAttribute('src');status.textContent='';};
+ button.onclick=async()=>{
+  button.disabled=true;status.setAttribute('role','status');status.textContent='Готовим предпросмотр…';const text=input.value;
+  try{const html=await prepare(text),response=await fetch('/api/student-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({html})}),value=await response.json();if(!response.ok)throw Error(value.error||'Не удалось открыть предпросмотр');if(!dialog.open)return;frame.src=value.url;panel.hidden=false;status.textContent=text===input.value?'Это HTML, который получит ученик. Проверьте инструкцию и управление.':'Инструкция изменена. Обновите предпросмотр.';}
+  catch(error){status.setAttribute('role','alert');status.textContent=error.message;}finally{button.disabled=false;}
+ };
+}

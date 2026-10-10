@@ -1,0 +1,31 @@
+name: Ошибка в приложении
+description: Сообщить о проблеме в Модельной
+title: "[Ошибка] "
+labels: []
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Версия и способ запуска
+      description: Версия из «Настройки → О приложении»; Windows-установщик, ZIP или браузер.
+      placeholder: "2.4.0, Windows-установщик"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Как воспроизвести
+      description: Укажите действия по порядку и модель, на которой возникает ошибка.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидаемый и фактический результат
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Дополнительные сведения
+      description: Система, скриншот или небольшой обезличенный пример. Не прикладывайте личную библиотеку или секреты.

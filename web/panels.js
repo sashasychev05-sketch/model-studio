@@ -10,6 +10,8 @@ export function normalizePanels(value={}){
 }
 function load(){try{return normalizePanels(JSON.parse(localStorage.getItem(key)||'{}'));}catch{return normalizePanels();}}
 const layout=load();
+export const getPanelLayout=()=>structuredClone(layout);
+export function setPanelLayout(value,doc=document){Object.assign(layout,normalizePanels(value));try{localStorage.setItem(key,JSON.stringify(layout));}catch{}initPanels(doc);}
 export const panelToggle=(id,label,icon='☰')=>`<button class="icon-btn panel-toggle" type="button" data-panel-toggle="${id}" aria-label="${label}" title="${label}" aria-expanded="${!layout[id].hidden}">${icon}</button>`;
 export const panelHandle=(id,label)=>`<div class="panel-resizer ${id==='properties'?'right-edge':'left-edge'}" role="separator" aria-orientation="vertical" aria-label="${label}" tabindex="0" data-panel-resize="${id}" aria-valuemin="${panelLimits[id][0]}" aria-valuemax="${panelLimits[id][1]}" aria-valuenow="${layout[id].width}" title="Перетащите границу. Двойной щелчок — исходная ширина; стрелки — изменить ширину."></div>`;
 export function initPanels(doc){
