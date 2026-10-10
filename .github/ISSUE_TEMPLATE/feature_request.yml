@@ -1,0 +1,19 @@
+name: Идея для приложения
+description: Предложить возможность или улучшение
+title: "[Идея] "
+labels: []
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Какую задачу нужно решить?
+      description: Опишите опыт, урок или затруднение при работе.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Предлагаемое поведение
+      description: Что должен уметь пользователь и как понять, что задача решена?
+    validations:
+      required: true
