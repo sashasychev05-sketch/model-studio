@@ -7,23 +7,25 @@ import {BACKUP_LIMITS} from './lib/library-backup.mjs';
 import {mcp} from './lib/mcp.mjs';
 import {validateModel} from './lib/model.js';
 import {withHTMLTheme} from './lib/theme.js';
+import {applicationInfo} from './lib/app-info.js';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const previews=new Map();
-function sendHTML(res,html,initialControls=[]){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'; sandbox allow-scripts"});res.end(withHTMLTheme(html,'light',initialControls));}
+function sendHTML(res,html,initialControls=[],prepared=false){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':`default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; ${prepared?"frame-src about:; ":''}connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'; sandbox allow-scripts`});res.end(prepared?html:withHTMLTheme(html,'light',initialControls));}
 const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
 async function body(req,limit=16*1024*1024){const parts=[];let bytes=0;for await(const part of req){bytes+=part.length;if(bytes>limit)throw new AppError('Файл слишком большой',413);parts.push(part);}return JSON.parse(Buffer.concat(parts).toString('utf8'));}
 export async function startServer({port=Number(process.env.MODEL_STUDIO_PORT??4189)}={}){
 await initialize();
 const server=http.createServer(async(req,res)=>{try{const host=req.headers.host??'';if(!/^(127\.0\.0\.1|localhost):\d+$/.test(host))return json(res,403,{error:'Only local access is supported'});const url=new URL(req.url,'http://'+host);res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');if(req.method==='POST'){if(req.headers.origin&&req.headers.origin!==url.origin)return json(res,403,{error:'Недопустимый источник'});if(req.headers['sec-fetch-site']==='cross-site')return json(res,403,{error:'Недопустимый источник'});}
- if(url.pathname==='/api/health')return json(res,200,{app:'model-studio',version:2,release:'2.4.0'});
+ if(url.pathname==='/api/health')return json(res,200,{app:'model-studio',version:2,release:applicationInfo().version,channel:applicationInfo().channel});
  if(url.pathname==='/api/analysis'&&req.method==='GET')return json(res,200,await getWorkspace());
  if(url.pathname==='/api/analysis'&&req.method==='POST')return json(res,200,await saveWorkspace(await body(req)));
  if(url.pathname==='/api/backup'&&req.method==='GET'){res.setHeader('Content-Disposition','attachment; filename="model-studio-backup.json"');return json(res,200,await exportBackup());}
  if(url.pathname==='/api/backup/preview'&&req.method==='POST')return json(res,200,await previewBackup(await body(req,BACKUP_LIMITS.bytes)));
  if(url.pathname==='/api/backup/restore'&&req.method==='POST'){const request=await body(req,BACKUP_LIMITS.bytes);return json(res,200,await restoreBackup(request.backup,request.expectedState));}
  if(url.pathname.startsWith('/api/html/')&&req.method==='GET'){const model=await getModel(url.pathname.slice('/api/html/'.length));if(model.spec.kind!=='html')throw new AppError('Это не HTML-модель',404);return sendHTML(res,model.spec.html,model.spec.initialControls);}
+ if(url.pathname==='/api/student-preview'&&req.method==='POST'){const {html}=await body(req);if(typeof html!=='string'||Buffer.byteLength(html)>8*1024*1024)throw new AppError('Предпросмотр: максимум 8 MiB');for(const [id,p]of previews)if(p.expires<Date.now())previews.delete(id);if(previews.size>=20)previews.delete(previews.keys().next().value);const token=crypto.randomUUID();previews.set(token,{html,prepared:true,expires:Date.now()+3600000});return json(res,200,{url:'/api/html-preview/'+token});}
  if(url.pathname==='/api/html-preview'&&req.method==='POST'){const spec=validateModel((await body(req)).spec);if(spec.kind!=='html')throw new AppError('Нужна HTML-модель');for(const [id,p]of previews)if(p.expires<Date.now())previews.delete(id);if(previews.size>=20)previews.delete(previews.keys().next().value);const token=crypto.randomUUID();previews.set(token,{html:spec.html,initialControls:spec.initialControls,expires:Date.now()+3600000});return json(res,200,{url:'/api/html-preview/'+token});}
- if(url.pathname.startsWith('/api/html-preview/')&&req.method==='GET'){const p=previews.get(url.pathname.slice('/api/html-preview/'.length));if(!p||p.expires<Date.now())throw new AppError('Обновите предпросмотр модели',404);return sendHTML(res,p.html,p.initialControls);}
+ if(url.pathname.startsWith('/api/html-preview/')&&req.method==='GET'){const p=previews.get(url.pathname.slice('/api/html-preview/'.length));if(!p||p.expires<Date.now())throw new AppError('Обновите предпросмотр модели',404);return sendHTML(res,p.html,p.initialControls,p.prepared);}
  if(url.pathname==='/api/library'&&req.method==='GET')return json(res,200,await listLibrary());
  if(url.pathname==='/api/library'&&req.method==='POST')return json(res,200,{result:await operation(await body(req))});
  if(url.pathname==='/mcp'&&req.method==='POST'){const value=await mcp(await body(req));if(value===null){res.writeHead(202);return res.end();}return json(res,200,value);}

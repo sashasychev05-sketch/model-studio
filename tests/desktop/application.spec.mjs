@@ -38,6 +38,11 @@ test('Desktop window is isolated, exports HTML and keeps saved analysis through 
   await page.getByRole('button',{name:'Экспорт',exact:true}).click();await page.getByRole('button',{name:'Готовая демонстрация · HTML',exact:true}).click();
   await expect.poll(async()=>{try{return (await fs.readFile(output,'utf8')).includes('<html');}catch{return false;}}).toBe(true);
   expect(await fs.readFile(output,'utf8')).not.toMatch(/<script[^>]+src=/);
+  await expect(page.getByRole('button',{name:'Показать в папке',exact:true})).toBeVisible();
+  await desktop.evaluate(({shell})=>{globalThis.revealedExports=[];shell.showItemInFolder=file=>globalThis.revealedExports.push(file);});
+  await page.getByRole('button',{name:'Показать в папке',exact:true}).click();await expect.poll(()=>desktop.evaluate(()=>globalThis.revealedExports)).toEqual([output]);
+  expect(await page.evaluate(()=>window.modelStudio.revealExport('C:\\Windows\\notepad.exe').then(()=>false,()=>true))).toBe(true);
+  await page.getByRole('button',{name:'Закрыть уведомление',exact:true}).click();await expect(page.locator('.export-notice')).toHaveCount(0);
   expect((await fs.readdir(path.join(profile,'library')))).toContain('analysis.json');
  }finally{await desktop.close();}
 });

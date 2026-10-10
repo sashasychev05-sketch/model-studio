@@ -1,4 +1,5 @@
 import {legacyBackup,legacyFile} from '/lib/legacy-library.js';
+import {timestamp} from '/lib/export-name.js';
 import {esc} from './data/format.js';
 
 const request=async(url,value)=>{
@@ -17,7 +18,7 @@ export function migrationDialog(env){
    await env.restored();
    env.dialog('Перенос завершён',`<p>Перенесено моделей: ${result.models}. Исходная папка не изменена. Сохранённый анализ можно открыть из каталога.</p><details><summary>Где сохранена прежняя текущая библиотека</summary><p class="data-hash">${esc(result.recoveryDirectory)}</p></details>`);
   });
-  env.document.querySelector('#legacy-backup').onclick=()=>env.download('model-studio-legacy-backup.json',JSON.stringify(backup),'application/json');
+  env.document.querySelector('#legacy-backup').onclick=()=>env.download('model-studio-legacy-backup-'+timestamp()+'.json',JSON.stringify(backup),'application/json');
  }
  select.onclick=async()=>{
   if(env.hasUnsaved()){status.textContent='Сначала сохраните модель и самостоятельный анализ.';return;}

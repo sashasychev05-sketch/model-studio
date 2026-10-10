@@ -1,4 +1,4 @@
-import {app,BrowserWindow,Menu,dialog,ipcMain} from 'electron';
+import {app,BrowserWindow,Menu,dialog,ipcMain,shell} from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -6,11 +6,14 @@ import {createRequire} from 'node:module';
 import {randomUUID} from 'node:crypto';
 import {createUpdateController,trustedUpdateSender} from './updates.mjs';
 import {readLegacyDirectory} from './legacy.mjs';
+import {createExportRegistry,trackExports} from './exports.mjs';
+import {applicationInfo} from '../lib/app-info.js';
 
 app.setName('Модельная');
 if(process.env.MODEL_STUDIO_PROFILE_DIR)app.setPath('userData',path.resolve(process.env.MODEL_STUDIO_PROFILE_DIR));
 let server,mainWindow,origin,updates,installing=false;
 let desktopSettings={checkUpdates:true},currentPort;
+const exports=createExportRegistry(file=>shell.showItemInFolder(file));
 const saveDesktopSettings=async()=>{const temp=preferences+'.'+randomUUID()+'.tmp';await fs.writeFile(temp,JSON.stringify({port:currentPort,...desktopSettings}),'utf8');await fs.rename(temp,preferences);};
 const profile=app.getPath('userData');
 const preferences=path.join(profile,'desktop.json');
@@ -24,7 +27,7 @@ function protectWindow(window){
  contents.on('will-navigate',(event,url)=>{if(!internal(url))event.preventDefault();});
  contents.on('will-attach-webview',event=>event.preventDefault());
  contents.setWindowOpenHandler(({url})=>{
-  if(internal(url)&&['/guide.html','/models.html','/desktop.html'].includes(new URL(url).pathname)){
+  if(internal(url)&&['/guide.html','/models.html','/desktop.html','/changes.html','/editor-next.html'].includes(new URL(url).pathname)){
    const guide=new BrowserWindow({...browserOptions,width:1000,height:800});protectWindow(guide);guide.once('ready-to-show',()=>guide.show());guide.loadURL(url);
   }
   return {action:'deny'};
@@ -40,6 +43,7 @@ function protectWindow(window){
 async function openWindow(){
  mainWindow=new BrowserWindow({...browserOptions,icon:path.join(here,'icon.ico')});
  protectWindow(mainWindow);mainWindow.once('ready-to-show',()=>mainWindow.show());
+ trackExports(mainWindow,origin,exports);
  for(const event of ['enter-full-screen','leave-full-screen'])mainWindow.on(event,()=>mainWindow?.webContents.send('model-studio:fullscreen',event==='enter-full-screen'));
  mainWindow.webContents.on('before-input-event',(event,input)=>{
   if(input.type==='keyDown'&&(input.key==='F11'||(input.key==='Escape'&&mainWindow?.isFullScreen()))){event.preventDefault();mainWindow.setFullScreen(input.key==='F11'?!mainWindow.isFullScreen():false);}
@@ -83,6 +87,8 @@ async function setupUpdates(){
 
 function setupApplicationIPC(){
  const handlers={
+  'model-studio:application-info':()=>applicationInfo(app.getVersion()),
+  'model-studio:reveal-export':id=>exports.reveal(id),
   'model-studio:fullscreen-state':()=>mainWindow.isFullScreen(),
   'model-studio:toggle-fullscreen':()=>{const next=!mainWindow.isFullScreen();mainWindow.setFullScreen(next);return next;},
   'model-studio:desktop-preferences':()=>({...desktopSettings}),

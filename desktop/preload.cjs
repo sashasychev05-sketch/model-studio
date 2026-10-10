@@ -1,6 +1,13 @@
 const {contextBridge,ipcRenderer}=require('electron');
 // No paths, feed URLs or installation commands are accepted from a renderer.
 contextBridge.exposeInMainWorld('modelStudio',Object.freeze({
+ applicationInfo:()=>ipcRenderer.invoke('model-studio:application-info'),
+ revealExport:id=>ipcRenderer.invoke('model-studio:reveal-export',id),
+ onExportReady:callback=>{
+  if(typeof callback!=='function')return ()=>{};
+  const listener=(_event,value)=>callback(value);ipcRenderer.on('model-studio:export-ready',listener);
+  return ()=>ipcRenderer.removeListener('model-studio:export-ready',listener);
+ },
  chooseLegacyLibrary:()=>ipcRenderer.invoke('model-studio:choose-legacy-library'),
  toggleFullscreen:()=>ipcRenderer.invoke('model-studio:toggle-fullscreen'),
  fullscreenState:()=>ipcRenderer.invoke('model-studio:fullscreen-state'),

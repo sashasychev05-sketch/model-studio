@@ -1,4 +1,5 @@
 import {esc} from './data/format.js';
+import {timestamp} from '/lib/export-name.js';
 const limit=128*1024*1024;
 async function request(url,value){
  const response=await fetch(url,value?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(value)}:{});
@@ -9,7 +10,7 @@ export function backupDialog(env){
  const status=env.document.querySelector('#backup-status');
  env.document.querySelector('#backup-download').onclick=async event=>{
   event.target.disabled=true;status.textContent='Готовим резервную копию…';
-  try{const value=await request('/api/backup');env.download('model-studio-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(value),'application/json');status.textContent='Резервная копия готова. Сохраните файл в надёжном месте.';}
+  try{const value=await request('/api/backup');env.download('model-studio-backup-'+timestamp()+'.json',JSON.stringify(value),'application/json');status.textContent='Резервная копия готова. Сохраните файл в надёжном месте.';}
   catch(error){status.textContent=error.message;}finally{event.target.disabled=false;}
  };
  const input=env.document.querySelector('#backup-file');

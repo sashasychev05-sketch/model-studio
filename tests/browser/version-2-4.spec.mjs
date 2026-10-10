@@ -39,13 +39,45 @@ test('Russian JSON tables preview units and restore saved charts automatically',
 for(const id of ['gallery_pendulum','gallery_circle'])test('Student HTML '+id+' includes instructions and works offline with isolation',async({page,context},testInfo)=>{
  await page.goto('/?model='+id);await page.getByRole('button',{name:'Экспорт',exact:true}).click();await page.getByRole('button',{name:'Подготовить опыт для ученика',exact:true}).click();
  await page.getByLabel('Инструкция для ученика',{exact:true}).fill('Проверьте два значения. <script>window.bad=true</script>');
+ await page.getByRole('button',{name:'Предпросмотр HTML для ученика',exact:true}).click();
+ const preview=page.frameLocator('#student-preview-frame');await expect(preview.locator('details')).toContainText('Проверьте два значения. <script>');
+ expect(await preview.locator('body').evaluate(()=>typeof window.modelStudio)).toBe('undefined');
+ const experiment=preview.frameLocator('iframe');if(id==='gallery_pendulum')await expect(experiment.locator('#scene svg')).toBeVisible();else await expect(experiment.locator('input[type=range]').first()).toBeVisible();
+ await expect(preview.locator('iframe')).toHaveAttribute('sandbox','allow-scripts');
+ const previewUrl=await page.locator('#student-preview-frame').getAttribute('src'),previewHTML=await (await page.request.get(previewUrl)).text();
  const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'Скачать HTML для ученика',exact:true}).click();
  const output=testInfo.outputPath('student.html');await (await downloading).saveAs(output);
+ expect(await fs.readFile(output,'utf8')).toBe(previewHTML);
  const offline=await context.newPage(),requests=[],errors=[];offline.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});offline.on('pageerror',e=>errors.push(e.message));
  await offline.goto(pathToFileURL(output).href);await expect(offline.locator('details')).toContainText('Проверьте два значения. <script>');
  expect(await offline.evaluate(()=>window.bad)).toBeUndefined();await expect(offline.locator('iframe')).toHaveAttribute('sandbox','allow-scripts');
  const frame=offline.frameLocator('iframe');if(id==='gallery_pendulum'){await expect(frame.locator('#scene svg')).toBeVisible();await frame.locator('#step').click();await expect(frame.locator('#time')).not.toHaveText('t = 0 с');}else await expect(frame.locator('input[type=range]').first()).toBeVisible();
  expect(requests).toEqual([]);expect(errors).toEqual([]);await offline.close();
+});
+
+test('About, offline changelog, shortcuts and readable table/backup export names',async({page,context})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Настройки приложения',exact:true}).click();
+ await expect(page.locator('#settings-version')).toHaveText('Модельная · 2.4.0 · черновик');await expect(page.locator('.shortcut-list')).toContainText('Ctrl');
+ const opening=page.waitForEvent('popup');await page.getByRole('button',{name:'Список изменений',exact:true}).click();const changes=await opening;await expect(changes.getByRole('heading',{level:1})).toContainText('2.4.0');expect(new URL(changes.url()).pathname).toBe('/changes.html');await changes.close();
+ await page.locator('#dialog').getByRole('button',{name:'Резервная копия',exact:true}).click();const download1=page.waitForEvent('download');await page.getByRole('button',{name:'Скачать резервную копию',exact:true}).click();const first=await download1;
+ const download2=page.waitForEvent('download');await page.getByRole('button',{name:'Скачать резервную копию',exact:true}).click();const second=await download2;
+ expect(first.suggestedFilename()).toMatch(/^model-studio-backup-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}\.json$/);expect(second.suggestedFilename()).not.toBe(first.suggestedFilename());
+ await page.locator('[data-close-dialog]').click();await page.getByRole('button',{name:'Анализ данных',exact:true}).click();await page.getByRole('button',{name:'Открыть пример',exact:true}).click();
+ await page.locator('.data-export summary').click();
+ const json=page.waitForEvent('download');await page.getByRole('button',{name:'Экспорт анализа JSON',exact:true}).click();expect((await json).suggestedFilename()).toMatch(/.+-анализ\.json$/);
+ const csv=page.waitForEvent('download');await page.getByRole('button',{name:'Экспорт CSV',exact:true}).click();expect((await csv).suggestedFilename()).toMatch(/.+-измерения\.csv$/);
+ await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Настройки приложения',exact:true}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+});
+
+test('A failed dialog submission keeps an escaped error visible and allows retry',async({page})=>{
+ await page.goto('/');const backup=await (await page.request.get('/api/backup')).json();
+ try{
+  await page.getByRole('button',{name:'Новая модель',exact:true}).click();
+  await page.route('**/api/library',route=>route.request().method()==='POST'?route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'Попробуйте ещё раз <script>window.bad=true</script>'})}):route.continue());
+  await page.getByRole('button',{name:'Создать модель',exact:true}).click();await expect(page.locator('.dialog-error')).toContainText('Попробуйте ещё раз <script>');
+  await expect(page.locator('.dialog-error')).toBeVisible({timeout:7000});await page.waitForTimeout(5500);await expect(page.locator('.dialog-error')).toBeVisible();expect(await page.evaluate(()=>window.bad)).toBeUndefined();await expect(page.getByRole('button',{name:'Создать модель',exact:true})).toBeEnabled();
+  await page.unroute('**/api/library');await page.getByRole('button',{name:'Создать модель',exact:true}).click();await expect(page.locator('#dialog')).toHaveCount(0);await expect(page.locator('.editor-shell')).toBeVisible();
+ }finally{const summary=await (await page.request.post('/api/backup/preview',{data:backup})).json();await page.request.post('/api/backup/restore',{data:{backup,expectedState:summary.expectedState}});}
 });
 
 test('Migration previews a directory, preserves the source and refuses malformed JSON',async({page})=>{

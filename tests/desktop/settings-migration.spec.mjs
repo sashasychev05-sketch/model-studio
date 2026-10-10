@@ -33,6 +33,6 @@ test('Desktop settings and fullscreen persist safely; native folder migration pr
   await page.screenshot({path:testInfo.outputPath('settings-migration.png'),fullPage:true});
   const prefs=JSON.parse(await fs.readFile(path.join(profile,'desktop.json'),'utf8'));expect(prefs.checkUpdates).toBe(false);expect(prefs.port).toBeGreaterThan(1023);
   const opening=desktop.waitForEvent('window');await page.evaluate(()=>window.open('/guide.html','_blank'));const guide=await opening;await guide.waitForLoadState('domcontentloaded');
-  expect(await guide.evaluate(()=>Promise.all([window.modelStudio.chooseLegacyLibrary(),window.modelStudio.toggleFullscreen(),window.modelStudio.setDesktopPreferences({checkUpdates:true})].map(p=>p.then(()=>false,()=>true))))).toEqual([true,true,true]);await guide.close();
+  expect(await guide.evaluate(()=>Promise.all([window.modelStudio.chooseLegacyLibrary(),window.modelStudio.toggleFullscreen(),window.modelStudio.setDesktopPreferences({checkUpdates:true}),window.modelStudio.applicationInfo(),window.modelStudio.revealExport('unknown')].map(p=>p.then(()=>false,()=>true))))).toEqual([true,true,true,true,true]);await guide.close();
  }finally{await desktop.close();}
 });
