@@ -52,13 +52,15 @@ for(const id of ['gallery_pendulum','gallery_circle'])test('Student HTML '+id+' 
  await offline.goto(pathToFileURL(output).href);await expect(offline.locator('details')).toContainText('Проверьте два значения. <script>');
  expect(await offline.evaluate(()=>window.bad)).toBeUndefined();await expect(offline.locator('iframe')).toHaveAttribute('sandbox','allow-scripts');
  const frame=offline.frameLocator('iframe');if(id==='gallery_pendulum'){await expect(frame.locator('#scene svg')).toBeVisible();await frame.locator('#step').click();await expect(frame.locator('#time')).not.toHaveText('t = 0 с');}else await expect(frame.locator('input[type=range]').first()).toBeVisible();
+ await expect.poll(()=>frame.locator('body').evaluate(()=>document.documentElement.scrollHeight-innerHeight)).toBeLessThanOrEqual(2);
+ expect(await offline.locator('iframe').evaluate(el=>getComputedStyle(el).borderTopWidth)).toBe('0px');
  expect(requests).toEqual([]);expect(errors).toEqual([]);await offline.close();
 });
 
 test('About, offline changelog, shortcuts and readable table/backup export names',async({page,context})=>{
  await page.goto('/');await page.getByRole('button',{name:'Настройки приложения',exact:true}).click();
- await expect(page.locator('#settings-version')).toHaveText('Модельная · 2.4.0');await expect(page.locator('.shortcut-list')).toContainText('Ctrl');
- const opening=page.waitForEvent('popup');await page.getByRole('button',{name:'Список изменений',exact:true}).click();const changes=await opening;await expect(changes.getByRole('heading',{level:1})).toContainText('2.4.0');expect(new URL(changes.url()).pathname).toBe('/changes.html');await changes.close();
+ await expect(page.locator('#settings-version')).toHaveText('Модельная · 2.4.1');await expect(page.locator('.shortcut-list')).toContainText('Ctrl');
+ const opening=page.waitForEvent('popup');await page.getByRole('button',{name:'Список изменений',exact:true}).click();const changes=await opening;await expect(changes.getByRole('heading',{level:1})).toContainText('2.4');expect(new URL(changes.url()).pathname).toBe('/changes.html');await changes.close();
  await page.locator('#dialog').getByRole('button',{name:'Резервная копия',exact:true}).click();const download1=page.waitForEvent('download');await page.getByRole('button',{name:'Скачать резервную копию',exact:true}).click();const first=await download1;
  const download2=page.waitForEvent('download');await page.getByRole('button',{name:'Скачать резервную копию',exact:true}).click();const second=await download2;
  expect(first.suggestedFilename()).toMatch(/^model-studio-backup-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}\.json$/);expect(second.suggestedFilename()).not.toBe(first.suggestedFilename());

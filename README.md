@@ -10,14 +10,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sashasychev05-sketch/model-studio/releases/tag/v2.4.0"><img src="https://img.shields.io/badge/version-2.4.0-4f56e8" alt="Версия 2.4.0"></a>
+  <a href="https://github.com/sashasychev05-sketch/model-studio/releases/tag/v2.4.1"><img src="https://img.shields.io/badge/version-2.4.1-4f56e8" alt="Версия 2.4.1"></a>
   <a href="https://github.com/sashasychev05-sketch/model-studio/actions/workflows/check.yml"><img src="https://github.com/sashasychev05-sketch/model-studio/actions/workflows/check.yml/badge.svg?branch=main" alt="Проверки и Windows-сборка"></a>
   <img src="https://img.shields.io/badge/Windows-x64-0078D4" alt="Windows x64">
   <img src="https://img.shields.io/badge/работает-офлайн-22863a" alt="Работает офлайн">
 </p>
 
 <p align="center">
-  <a href="https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.0/ModelStudio-Setup-2.4.0-x64.exe"><strong>Скачать для Windows · 2.4.0</strong></a>
+  <a href="https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.1/ModelStudio-Setup-2.4.1-x64.exe"><strong>Скачать для Windows · 2.4.1</strong></a>
   · <a href="docs/GUIDE.md">Руководство</a>
   · <a href="docs/VERSION-2.4.md">Что нового</a>
   · <a href="docs/ROADMAP.md">План развития</a>
@@ -29,7 +29,7 @@
 
 ## Скачать и начать
 
-**[Установщик 2.4.0 для Windows x64](https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.0/ModelStudio-Setup-2.4.0-x64.exe)** · [Все выпуски](https://github.com/sashasychev05-sketch/model-studio/releases)
+**[Установщик 2.4.1 для Windows x64](https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.1/ModelStudio-Setup-2.4.1-x64.exe)** · [Все выпуски](https://github.com/sashasychev05-sketch/model-studio/releases)
 
 1. Скачайте и запустите установщик. Он создаёт ярлыки для текущего пользователя; права администратора не нужны.
 2. Откройте **Модельную** и выберите опыт в каталоге.
@@ -39,6 +39,8 @@
 Программа открывается отдельным окном. Установка Node.js, терминал и браузер для запуска Windows-приложения не нужны. Ученику достаточно открыть полученный HTML в современном браузере: приложение, сервер и интернет ему не требуются.
 
 Обновления: **⚙ Настройки приложения → Проверить обновления**. Скачивание и установка требуют подтверждения; библиотека хранится отдельно от программы. Установщик пока без цифровой подписи Windows. [Установка, обновления, данные и ZIP-сборка](docs/DESKTOP.md).
+
+**Исправление 2.4.1 от 12 октября 2026:** автономный HTML показывает опыт без вложенной рамки и отдельной прокрутки. Высота подстраивается под содержимое и ширину экрана. Старые HTML нужно экспортировать заново.
 
 ## Что нового в 2.4
 
