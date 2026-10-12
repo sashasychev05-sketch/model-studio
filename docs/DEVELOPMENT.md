@@ -1,6 +1,6 @@
 # Разработка
 
-Черновик 2.4.0: [возможности и проверки](VERSION-2.4.md), [предложения редактора](EDITOR-NEXT.md). Новые модули: web/app-settings.js — общие настройки и полный экран; web/migration.js, lib/legacy-library.js, desktop/legacy.mjs — перенос папки через проверку резервной копии; lib/compute/table-import.js — JSON-таблицы и подсказки; lib/lesson-guide.js, web/student-export.js — учебный HTML. Состояние окна, выбор папки и настройка проверки обновлений доступны только через ограниченный мост основного окна. Исходные папки при переносе не изменяются.
+Черновик 2.4.1: [возможности и проверки](VERSION-2.4.md), [предложения редактора](EDITOR-NEXT.md). Новые модули: web/app-settings.js — общие настройки и полный экран; web/migration.js, lib/legacy-library.js, desktop/legacy.mjs — перенос папки через проверку резервной копии; lib/compute/table-import.js — JSON-таблицы и подсказки; lib/lesson-guide.js, web/student-export.js — учебный HTML. Состояние окна, выбор папки и настройка проверки обновлений доступны только через ограниченный мост основного окна. Исходные папки при переносе не изменяются.
 
 Запуск веб-версии не требует установки внешних пакетов. Нужен Node.js 22.13+; интерфейс использует стандартные ES-модули браузера.
 
@@ -59,7 +59,7 @@ lib/compute/ содержит схемы и адаптер statistics-js/1; web/
 
 ## Desktop и проверки пользовательских сценариев
 
-См. [Модельная 2.4.0](DESKTOP.md). Для разработки отдельного окна: pnpm install --frozen-lockfile, node node_modules/electron/install.js, pnpm desktop. Для Chromium: pnpm exec playwright install chromium, pnpm test:browser. Windows-приложение проверяется pnpm test:desktop. GitHub Actions проверяет собранный exe, загрузку обновлений и установку с сохранением анализа, выдаёт ZIP и NSIS-артефакты. Все проверки используют отдельные каталоги work/. Для CI используется Node.js 24 и закреплённый pnpm 11.25.0.
+См. [Модельная 2.4.1](DESKTOP.md). Для разработки отдельного окна: pnpm install --frozen-lockfile, node node_modules/electron/install.js, pnpm desktop. Для Chromium: pnpm exec playwright install chromium, pnpm test:browser. Windows-приложение проверяется pnpm test:desktop. GitHub Actions проверяет собранный exe, загрузку обновлений и установку с сохранением анализа, выдаёт ZIP и NSIS-артефакты. Все проверки используют отдельные каталоги work/. Для CI используется Node.js 24 и закреплённый pnpm 11.25.0.
 
 Сервер экспортирует startServer для desktop, но прямой node server.mjs сохраняет прежнее поведение. GET/POST /api/analysis используют optimistic revision. GET /api/backup выгружает библиотеку; POST /api/backup/preview валидирует и возвращает expectedState; POST /api/backup/restore проверяет этот снимок, сохраняет прежний каталог и заменяет библиотеку. Подробные лимиты и восстановление после прерывания описаны в DESKTOP.md.
 

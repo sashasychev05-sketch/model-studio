@@ -1,5 +1,15 @@
 # История выпусков Модельной
 
+## 2.4.1 — 12 октября 2026
+
+**[Скачать установщик Windows x64](https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.1/ModelStudio-Setup-2.4.1-x64.exe)** · [Все выпуски](https://github.com/sashasychev05-sketch/model-studio/releases).
+
+Исправлено «окно внутри окна» в автономном HTML: убраны рамки вокруг встроенного опыта и фиксированная высота. Модель прокручивается вместе со страницей; её высота автоматически подстраивается под содержимое, раскрытие результатов и ширину экрана. Исправление действует и для HTML со сценариями, и для подготовки опыта для ученика, включая сцены конструктора. Изоляция пользовательского HTML, управление и автономная работа сохранены.
+
+Ранее скачанные HTML-файлы нужно экспортировать заново из этой версии. Обновление программы сохраняет библиотеку; установщик пока без цифровой подписи Windows.
+
+[Описание](https://github.com/sashasychev05-sketch/model-studio/blob/v2.4.1/docs/VERSION-2.4.md) · [Проверки выпуска](https://github.com/sashasychev05-sketch/model-studio/actions/workflows/check.yml).
+
 ## 2.4.0 — 10 октября 2026
 
 **[Скачать установщик Windows x64](https://github.com/sashasychev05-sketch/model-studio/releases/download/v2.4.0/ModelStudio-Setup-2.4.0-x64.exe)** · [Инструкция установки и обновления](https://github.com/sashasychev05-sketch/model-studio/blob/v2.4.0/docs/DESKTOP.md).
