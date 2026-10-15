@@ -1,3 +1,4 @@
+import {bodyLabel,defaultDynamicLabel} from '../lib/display.js';
 import * as teachingFunctions from '../lib/teaching.js';
 import * as measurementFunctions from '../lib/measurements.js';
 import {auditModel} from '../lib/audit.js';
@@ -18,7 +19,7 @@ import * as camera from '../lib/camera.js';
 import {evaluate} from '../lib/expression.js';
 import {fieldExamples} from '../lib/field-examples.js';
 const near=(a,b,t=1e-9)=>assert.ok(Math.abs(a-b)<=t,`${a} != ${b}, tolerance ${t}`);
-async function renderRuntime(){const rt={...potentials,...electro,...interactions,...camera,initialState,step,context,evaluate};vm.createContext(rt);for(const file of ['field-drawing.js','scene.js'])vm.runInContext((await fs.readFile(new URL('../web/'+file,import.meta.url),'utf8')).replace(/^import[^\n]*\n/gm,'').replace(/\bexport\s+(?=(?:function|const)\b)/g,''),rt);vm.runInContext('globalThis.render=sceneSVG;globalThis.graph=graphSVG;globalThis.magnetic=magneticFieldSVG;globalThis.electric=chargeFieldSVG;',rt);return rt;}
+async function renderRuntime(){const rt={bodyLabel,defaultDynamicLabel,...potentials,...electro,...interactions,...camera,initialState,step,context,evaluate};vm.createContext(rt);for(const file of ['field-drawing.js','scene.js'])vm.runInContext((await fs.readFile(new URL('../web/'+file,import.meta.url),'utf8')).replace(/^import[^\n]*\n/gm,'').replace(/\bexport\s+(?=(?:function|const)\b)/g,''),rt);vm.runInContext('globalThis.render=sceneSVG;globalThis.graph=graphSVG;globalThis.magnetic=magneticFieldSVG;globalThis.electric=chargeFieldSVG;',rt);return rt;}
 test('Uniform sphere: inverse square outside, linear interior, finite centre, continuous potential and force',()=>{
  const m=gravityLesson(),M=m.bodies[0].mass,R=m.bodies[0].gravityRadius;
  for(const r of [0,1,50,99.999,100,100.001,200,400]){m.bodies[1].x=r;const s=initialState(m),force=gravitationalForces(m,s).probe;

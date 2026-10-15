@@ -1,5 +1,6 @@
 import {esc} from './scene.js';
 import {objectKinds} from '/lib/components.js';
+import {defaultDynamicLabel} from '/lib/display.js';
 
 // UI state only: expanding a section never changes a saved physical model.
 const inspectorSections=new Map();
@@ -34,6 +35,12 @@ export function bodyInspector(m,b,scope,{field,select,check,button}){
  const geometry=select('Вид объекта','body.shape',b.shape,objectKinds)+field('Цвет','body.color',b.color,'color')+
   (['rect','triangle','platform','arrow'].includes(b.shape)?row(field('Ширина, м','body.width',b.width??b.size*2,'number','min="0.02"')+field('Высота, м','body.height',b.height??b.size*1.4,'number','min="0.02"')):field(b.shape==='text'?'Размер подписи, м':'Радиус рисунка, м','body.size',b.size,'number','min="0.02"'))+
   field('Угол рисунка, °','body.angle',b.angle??0,'number')+check('Показывать траекторию','body.trail',b.trail)+check('Показывать вектор скорости','body.vector',b.vector)+hint('Подпись можно перетаскивать отдельно от объекта.')+button('teach-label-reset','Вернуть подпись на место','quiet');
+ const label=b.dynamicLabel??defaultDynamicLabel(b);
+ const display=check('Показывать на сцене','body.visible',b.visible!==false)+
+  check('Запретить перетаскивание','body.dragLocked',b.dragLocked===true)+hint('Скрытый объект продолжает участвовать в расчёте и остаётся в списке. Блокировка защищает положение объекта и его подпись; координаты можно менять в свойствах.')+
+  check('Динамическая подпись','body.dynamicLabel.enabled',label.enabled)+
+  (label.enabled?field('Формула подписи','body.dynamicLabel.expression',label.expression)+field('Текст перед значением','body.dynamicLabel.prefix',label.prefix)+row(field('Единица подписи','body.dynamicLabel.unit',label.unit)+field('Знаков после запятой','body.dynamicLabel.precision',label.precision,'number','min="0" max="8"'))+
+   hint(`Например: <code>sqrt(${esc(b.id)}_vx^2+${esc(b.id)}_vy^2)</code> — скорость; <code>${esc(b.id)}_m*(${esc(b.id)}_vx^2+${esc(b.id)}_vy^2)/2</code> — кинетическая энергия. Доступны время <code>t</code>, параметры и вычисляемые величины. Единица задаётся автором.`):'');
  let formulas='';
  if(b.motion==='force')formulas=group('forces','Дополнительные силы',field('Сила Fₓ, Н','body.fx',b.fx)+field('Сила Fᵧ, Н','body.fy',b.fy)+hint('Добавляются к полям и связям. Например: <code>-k*x</code>, <code>-m*g</code>. Не добавляйте тяжесть второй раз, если уже есть поле тяжести.'),{open:b.fx!=='0'||b.fy!=='0'});
  if(b.motion==='formula')formulas=group('formulas','Формулы движения',field('Координата x(t), м','body.xFormula',b.xFormula)+field('Координата y(t), м','body.yFormula',b.yFormula)+hint('Используйте <code>t</code>, параметры и начальные условия. Пример: <code>x0+vx0*t</code>.'));
@@ -41,6 +48,7 @@ export function bodyInspector(m,b,scope,{field,select,check,button}){
   group('motion','Движение',motion+behavior)+
   group('initial',b.motion==='fixed'?'Положение':'Начальные условия',position+(b.motion==='fixed'?'':velocity))+
   group('physics','Физические характеристики',physics)+formulas+
+  group('display','Видимость и подпись',display)+
   group('appearance','Внешний вид и отображение',geometry,{open:false,note:'Объект рассчитывается как материальная точка. Размеры и угол меняют рисунок. Радиус гравитационного шара задаётся отдельно в физических характеристиках; столкновения и вращение не рассчитываются.'})+
   group('identifier','Имя для формул',field('Идентификатор','body.id',b.id)+hint(`Радиус источника: <code>${esc(b.id)}_R</code>; его поле включено (0 или 1): <code>${esc(b.id)}_gravity</code>. Координаты и скорость: <code>${esc(b.id)}_x</code>, <code>${esc(b.id)}_y</code>, <code>${esc(b.id)}_vx</code>, <code>${esc(b.id)}_vy</code>.`),{open:false})+
   `<div class="inspector-footer">${button('duplicate-body','Копия','quiet','copy')}${button('delete-body','Удалить','danger','trash')}</div>`;
