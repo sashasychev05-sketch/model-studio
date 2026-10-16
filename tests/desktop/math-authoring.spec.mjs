@@ -1,0 +1,10 @@
+import {test,expect,_electron as electron} from '@playwright/test';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+test('Desktop creates a mathematical model through the wizard and exports its bundled geometry',async({},testInfo)=>{
+ const desktop=await electron.launch({...(process.env.MODEL_STUDIO_TEST_EXE?{executablePath:process.env.MODEL_STUDIO_TEST_EXE,args:[]}:{args:['.']}),cwd:path.resolve('.'),env:{...process.env,MODEL_STUDIO_PROFILE_DIR:path.resolve('work','desktop-math-'+crypto.randomUUID()),MODEL_STUDIO_DISABLE_UPDATE_CHECK:'1'},timeout:60000});
+ try{
+  const page=await desktop.firstWindow();await expect(page.locator('.model-card')).toHaveCount(20);await page.getByRole('button',{name:'Новая модель',exact:true}).click();await page.locator('#dialog [name=title]').fill('Геометрия в приложении');await page.getByLabel('Способ создания',{exact:true}).selectOption('geometry');await page.getByRole('button',{name:'Создать модель',exact:true}).click();await expect(page.locator('#scene [data-math-object="triangle"] text')).toContainText('S = 6');await page.locator('[data-select-math="circle"]').click();await page.getByLabel('Радиус · число или параметр',{exact:true}).fill('3');await page.getByLabel('Радиус · число или параметр',{exact:true}).press('Tab');await page.getByRole('button',{name:'Сохранить',exact:true}).click();await expect(page.locator('#save-state')).toHaveText('Сохранено в каталоге');await page.reload();await expect(page.locator('#scene [data-math-object="circle"] text')).toContainText('r = 3');
+  const file=testInfo.outputPath('math.html');await desktop.evaluate(({BrowserWindow},file)=>{BrowserWindow.getAllWindows()[0].webContents.session.once('will-download',(_event,item)=>item.setSavePath(file));},file);await page.getByRole('button',{name:'Экспорт',exact:true}).click();await page.getByRole('button',{name:'Готовая демонстрация · HTML',exact:true}).click();await expect.poll(async()=>{try{return(await fs.readFile(file,'utf8')).includes('function mathObjectsSVG');}catch{return false;}}).toBe(true);
+ }finally{await desktop.close();}
+});
