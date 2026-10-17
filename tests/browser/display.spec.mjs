@@ -17,6 +17,11 @@ async function create(page){
  const response=await page.request.post('/api/library',{data:{action:'save',spec:m}});expect(response.ok()).toBe(true);const {result}=await response.json();await page.goto('/?model='+result.id);await page.getByRole('button',{name:'Редактор',exact:true}).click();return result.id;
 }
 async function drag(page,locator){const box=await locator.boundingBox();expect(box).toBeTruthy();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+box.width/2+45,box.y+box.height/2+20,{steps:5});await page.mouse.up();}
+test('Invalid label precision restores the previous value and keeps the model saveable',async({page})=>{
+ await create(page);await page.getByLabel('Динамическая подпись',{exact:true}).check();const precision=page.getByLabel('Знаков после запятой',{exact:true});
+ for(const invalid of ['','9','2.5']){await precision.fill(invalid);await precision.press('Tab');await expect(precision).toHaveValue('2');await expect(page.locator('#scene [data-dynamic-label="ball"]')).toHaveText('Скорость: 1,00 м/с');}
+ await precision.fill('0');await precision.press('Tab');await expect(page.locator('#scene [data-dynamic-label="ball"]')).toHaveText('Скорость: 1 м/с');await precision.fill('');await precision.press('Tab');await expect(precision).toHaveValue('0');await page.getByRole('button',{name:'Сохранить',exact:true}).click();await expect(page.locator('#save-state')).toHaveText('Сохранено в каталоге');
+});
 test('Visibility, drag locking and dynamic labels survive Undo, copying, save and reload',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',error=>errors.push(error.message));const id=await create(page);
  await page.locator('[data-a="step"]').click();const time=await page.locator('#stage-time').textContent();
