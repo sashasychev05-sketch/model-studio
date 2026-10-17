@@ -7,7 +7,7 @@ export function mathObjectsSVG(m,s,c,tr,selected,small,escape,format){
   try{
    const v=mathObjectGeometry(item,s,c),color=item.color,width=item.strokeWidth+(selected===item.id&&!small?1.5:0),style=`stroke="${color}" stroke-width="${width}"`,fill=item.fill?color:'none';let shape='',anchor,detail='';
    if(item.type==='function'){
-    const paths=mathFunctionSegments(item,c,r,small?80:320);shape=paths.map(points=>`<polyline points="${points.map(p=>X(p.x)+','+Y(p.y)).join(' ')}" fill="none" ${style}/>`).join('');
+    const paths=mathFunctionSegments(item,c,r,small?80:320);if(!paths.length&&Math.min(item.maxX,r.maxX)>Math.max(item.minX,r.minX))throw new Error('График не удалось построить: проверьте область определения и масштаб');shape=paths.map(points=>`<polyline points="${points.map(p=>X(p.x)+','+Y(p.y)).join(' ')}" fill="none" ${style}/>`).join('');
     const visible=paths.flat().filter(p=>p.y>=r.minY&&p.y<=r.maxY);anchor=visible[Math.floor(visible.length*.65)]??{x:r.minX,y:r.maxY};
    }else if(item.type==='arc'){
     const radians=angle=>angle*Math.PI/180,at=angle=>({x:v.center.x+v.radius*Math.cos(radians(angle)),y:v.center.y+v.radius*Math.sin(radians(angle))}),start=at(v.startAngle),parts=Math.ceil(Math.abs(v.sweepAngle)/180);let path=`M${X(start.x)} ${Y(start.y)}`;
@@ -19,7 +19,7 @@ export function mathObjectsSVG(m,s,c,tr,selected,small,escape,format){
    }else if(item.type==='circle'){
     shape=`<circle cx="${X(v.center.x)}" cy="${Y(v.center.y)}" r="${v.radius*scale}" fill="${fill}" fill-opacity=".1" ${style}/>`;anchor={x:v.center.x,y:v.center.y+v.radius/2};detail='r = '+format(v.radius);
    }else if(item.type==='polygon'){
-    shape=`<polygon points="${v.points.map(p=>X(p.x)+','+Y(p.y)).join(' ')}" fill="${fill}" fill-opacity=".12" fill-rule="evenodd" ${style}/>`;anchor={x:v.points.reduce((sum,p)=>sum+p.x,0)/v.points.length,y:v.points.reduce((sum,p)=>sum+p.y,0)/v.points.length};detail='P = '+format(v.perimeter)+'; S = '+format(v.area);
+    shape=`<polygon points="${v.points.map(p=>X(p.x)+','+Y(p.y)).join(' ')}" fill="${fill}" fill-opacity=".12" fill-rule="evenodd" ${style}/>`;anchor={x:v.points.reduce((sum,p)=>sum+p.x,0)/v.points.length,y:v.points.reduce((sum,p)=>sum+p.y,0)/v.points.length};detail='P = '+format(v.perimeter)+(v.selfIntersecting?'; S не определена: контур пересекает себя':'; S = '+format(v.area));
    }else{
     const [a,b]=v.points;shape=`<line x1="${X(a.x)}" y1="${Y(a.y)}" x2="${X(b.x)}" y2="${Y(b.y)}" ${style}/><line x1="${X(a.x)}" y1="${Y(a.y)}" x2="${X(b.x)}" y2="${Y(b.y)}" stroke="transparent" stroke-width="14"/>`;
     if(item.type==='vector'){const angle=Math.atan2(Y(b.y)-Y(a.y),X(b.x)-X(a.x)),tip={x:X(b.x),y:Y(b.y)};shape+=`<path d="M${tip.x-12*Math.cos(angle-.45)} ${tip.y-12*Math.sin(angle-.45)}L${tip.x} ${tip.y}L${tip.x-12*Math.cos(angle+.45)} ${tip.y-12*Math.sin(angle+.45)}" fill="none" ${style}/>`;}

@@ -1,6 +1,6 @@
 import {esc} from './scene.js';
 export async function standaloneHTML(model,analysisReport=''){
- const sources=await Promise.all(['/lib/expression.js','/lib/display.js','/lib/math-objects.js','/lib/construction.js','/lib/electrostatics.js','/lib/gravity.js','/lib/interaction.js','/lib/field-potential.js','/lib/teaching.js','/lib/measurements.js','/lib/engine.js','/lib/camera.js','/field-drawing.js','/math-drawing.js','/scene.js','/viewport.js'].map(async url=>{const r=await fetch(url);if(!r.ok)throw new Error('Не удалось подготовить демонстрацию');return r.text();}));
+ const sources=await Promise.all(['/lib/expression.js','/lib/display.js','/lib/math-objects.js','/lib/math-preset-catalog.js','/lib/construction.js','/lib/electrostatics.js','/lib/gravity.js','/lib/interaction.js','/lib/field-potential.js','/lib/teaching.js','/lib/measurements.js','/lib/engine.js','/lib/camera.js','/field-drawing.js','/math-drawing.js','/scene.js','/viewport.js'].map(async url=>{const r=await fetch(url);if(!r.ok)throw new Error('Не удалось подготовить демонстрацию');return r.text();}));
  const core=sources.map(s=>s.replace(/^import[^\n]*\n/gm,'').replace(/\bexport\s+(?=(?:function|const|let|class)\b)/g,'')).join('\n');
  const data=JSON.stringify(model).replaceAll('<','\\u003c').replaceAll('\u2028','\\u2028').replaceAll('\u2029','\\u2029');
  const runtime=`
