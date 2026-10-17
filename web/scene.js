@@ -1,3 +1,4 @@
+import {spatialSceneSVG} from './spatial-drawing.js';
 import {mathObjectsSVG} from './math-drawing.js';
 import {measure} from '/lib/measurements.js';
 import {initialState,step,context} from '/lib/engine.js';
@@ -8,7 +9,7 @@ import {scalarField,fieldLayerEnabled} from '/lib/field-potential.js';
 import {chargeFieldSVG,scalarFieldSVG,magneticFieldSVG,uniformFieldsSVG} from './field-drawing.js';
 export const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const fmt=v=>{if(!Number.isFinite(v))return '—';if(v===0)return '0';if(v!==0&&(Math.abs(v)<.001||Math.abs(v)>=1e7)){const [mantissa,exponent]=v.toExponential(3).split('e'),sup={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return mantissa.replace('.',',')+' × 10'+String(Number(exponent)).split('').map(c=>sup[c]).join('');}return v.toLocaleString('ru-RU',{maximumFractionDigits:3});};
-export function sceneSVG(m,s,history=[],selected=null,small=false){const W=800,H=450,tr=sceneTransform(m.scene,small),{r,scale,ox,oy,X,Y}=tr,dx=r.maxX-r.minX,dy=r.maxY-r.minY;
+export function sceneSVG(m,s,history=[],selected=null,small=false){if(m.scene.dimension===3)return spatialSceneSVG(m,selected,small,esc,fmt);const W=800,H=450,tr=sceneTransform(m.scene,small),{r,scale,ox,oy,X,Y}=tr,dx=r.maxX-r.minX,dy=r.maxY-r.minY;
  let out=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" aria-label="Сцена модели" role="img" data-scene="true"><defs><pattern id="dots" width="${Math.max(10,scale)}" height="${Math.max(10,scale)}" patternUnits="userSpaceOnUse" x="${X(0)}" y="${Y(0)}"><circle cx="1" cy="1" r="1" fill="#cfd6e3"/></pattern><marker id="vector" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ee8a36"/></marker><clipPath id="sceneClip"><rect x="${ox}" y="${oy}" width="${dx*scale}" height="${dy*scale}"/></clipPath></defs><rect width="800" height="450" fill="#f8faff"/>`;
  if(m.scene.grid){const raw=Math.max(dx,dy)/12,power=10**Math.floor(Math.log10(raw)),step=[1,2,5,10].map(k=>k*power).find(k=>k>=raw);for(let x=Math.ceil(r.minX/step)*step;x<=r.maxX+step*1e-6;x+=step)out+=`<line x1="${X(x)}" x2="${X(x)}" y1="${oy}" y2="${H-oy}" stroke="var(--studio-line,#dce3ee)" opacity=".55"/>`;for(let y=Math.ceil(r.minY/step)*step;y<=r.maxY+step*1e-6;y+=step)out+=`<line y1="${Y(y)}" y2="${Y(y)}" x1="${ox}" x2="${W-ox}" stroke="var(--studio-line,#dce3ee)" opacity=".55"/>`;}
  if(r.minY<=0&&r.maxY>=0)out+=`<line x1="${ox}" x2="${W-ox}" y1="${Y(0)}" y2="${Y(0)}" stroke="#c8d0df" stroke-width="1.4"/>`;

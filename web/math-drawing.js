@@ -1,9 +1,10 @@
+import {isSpatialObject} from '../lib/spatial-catalog.js';
 import {mathObjectGeometry,mathFunctionSegments} from '../lib/math-objects.js';
 import {clipInfiniteLine} from '../lib/construction.js';
 
 export function mathObjectsSVG(m,s,c,tr,selected,small,escape,format){
  let out='';const {X,Y,scale,r}=tr;
- for(const item of m.mathObjects??[]){if(!item.visible)continue;
+ for(const item of m.mathObjects??[]){if(!item.visible||isSpatialObject(item))continue;
   try{
    const v=mathObjectGeometry(item,s,c),color=item.color,width=item.strokeWidth+(selected===item.id&&!small?1.5:0),style=`stroke="${color}" stroke-width="${width}"`,fill=item.fill?color:'none';let shape='',anchor,detail='';
    if(item.type==='function'){

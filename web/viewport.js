@@ -1,5 +1,6 @@
+import {installSpatialNavigation} from './spatial-navigation.js';
 import {cameraOf,screenToWorld,zoomCamera,panCamera} from '/lib/camera.js';
-export function installSceneNavigation(element,options){let gesture=null,wheelTimer=null,wheelStarted=false;
+export function installSceneNavigation(element,options){if(options.getModel().scene.dimension===3)return installSpatialNavigation(element,options);let gesture=null,wheelTimer=null,wheelStarted=false;
  const getScene=()=>options.getModel().scene;
  const begin=kind=>options.onGestureStart?.(kind),end=kind=>options.onGestureEnd?.(kind);
  const world=(scene,e)=>screenToWorld(scene,element.querySelector('svg').getBoundingClientRect(),e.clientX,e.clientY);
