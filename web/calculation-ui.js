@@ -4,7 +4,7 @@ import {mathObjectGeometry} from '../lib/math-objects.js';
 import {isSpatialObject} from '../lib/spatial-catalog.js';
 import {spatialMetrics} from '../lib/spatial.js';
 export function calculationCards(model,c){
- return calculationReports(model,c).map(report=>`<section class="calculation-card"><h3>${esc(report.name)}</h3>${report.message?`<p class="calculation-message">${esc(report.message)}</p>`:''}<div class="calculation-values">${report.values.filter(value=>!(value.key==='count'&&report.status==='many')).map(value=>`<div><span>${esc(value.label)}</span><strong>${fmt(value.value)} <small>${esc(value.unit)}</small></strong></div>`).join('')}</div></section>`).join('');
+ return calculationReports(model,c).map(report=>`<section class="calculation-card" data-calculation-result="${esc(report.id)}"><h3>${esc(report.name)}</h3>${report.message?`<p class="calculation-message">${esc(report.message)}</p>`:''}<div class="calculation-values">${report.values.filter(value=>!(value.key==='count'&&report.status==='many')).map(value=>`<div><span>${esc(value.label)}</span><strong>${fmt(value.value)} <small>${esc(value.unit)}</small></strong></div>`).join('')}</div></section>`).join('');
 }
 export function geometryCards(model,state,c){
  return (model.mathObjects??[]).filter(item=>item.type!=='function'&&item.visible!==false).map(item=>{
