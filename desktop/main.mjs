@@ -27,7 +27,7 @@ function protectWindow(window){
  contents.on('will-navigate',(event,url)=>{if(!internal(url))event.preventDefault();});
  contents.on('will-attach-webview',event=>event.preventDefault());
  contents.setWindowOpenHandler(({url})=>{
-  if(internal(url)&&['/guide.html','/models.html','/desktop.html','/changes.html','/editor-next.html','/simple-modeling.html','/workspace-modeling.html','/interface-workspace.html'].includes(new URL(url).pathname)){
+  if(internal(url)&&['/guide.html','/models.html','/desktop.html','/changes.html','/changes-2.4.html','/editor-next.html','/simple-modeling.html','/workspace-modeling.html','/interface-workspace.html'].includes(new URL(url).pathname)){
    const guide=new BrowserWindow({...browserOptions,width:1000,height:800});protectWindow(guide);guide.once('ready-to-show',()=>guide.show());guide.loadURL(url);
   }
   return {action:'deny'};
